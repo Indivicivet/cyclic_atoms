@@ -1,0 +1,46 @@
+import numpy as np
+from scipy.optimize import milp, Bounds, LinearConstraint
+from scipy.sparse import lil_matrix
+# q[0:11], r[11:18], d3[18:95], d5[95:172], active[172:249], empties[249:326]
+n=326; A=lil_matrix((77*5+2,n)); lo=[];hi=[];j=0
+for y in range(7):
+ for z in range(11):
+  i=y*11+z; q=z;r=11+y;d3=18+i;d5=95+i;active=172+i;empty=249+i
+  A[j,q]=1;A[j,r]=1;A[j,empty]=2;A[j,d3]=-3;A[j,d5]=-5;lo.append(0);hi.append(0);j+=1
+  A[j,q]=1;A[j,r]=1;A[j,active]=-1;lo.append(0);hi.append(np.inf);j+=1
+  A[j,q]=1;A[j,r]=1;A[j,active]=-30;lo.append(-np.inf);hi.append(0);j+=1
+  A[j,d3]=1;A[j,active]=5;lo.append(5);hi.append(np.inf);j+=1
+  A[j,d5]=1;A[j,active]=3;lo.append(3);hi.append(np.inf);j+=1
+A[j,:11]=1;lo.append(1);hi.append(np.inf);j+=1
+A[j,11:18]=1;lo.append(1);hi.append(np.inf)
+lb=np.zeros(n);ub=np.r_[np.repeat(15,18),np.repeat(5,77),np.repeat(3,77),np.ones(77),np.repeat(15,77)];obj=np.r_[-np.ones(18),np.ones(154),np.zeros(154)]
+r=milp(obj,integrality=np.ones(n),bounds=Bounds(lb,ub),constraints=LinearConstraint(A.tocsc(),np.array(lo),np.array(hi)),options={'time_limit':55,'disp':True,'mip_rel_gap':0})
+print('RESULT',r.message,'size',616-r.fun if r.fun is not None else None,'upper',616-r.mip_dual_bound if r.fun is not None else None,flush=True)
+if r.x is not None:print('q',np.round(r.x[:11]),'r',np.round(r.x[11:18]),flush=True)
+
+# Independently check the 590-atom construction.
+from collections import Counter, defaultdict
+atoms=[]
+for x in range(5):
+ for y in range(7):
+  for z in range(11):atoms.append((3,[(u,x,y,z) for u in range(3)]))
+for u in (0,1):
+ for y in range(7):
+  for z in range(11):atoms.append((5,[(u,x,y,z) for x in range(5)]))
+for x in range(4):
+ for z in range(11):atoms.append((7,[(2,x,y,z) for y in range(7)]))
+for y in range(7):atoms.append((11,[(2,4,y,z) for z in range(11)]))
+occupied=defaultdict(list)
+for i,(p,sites) in enumerate(atoms):
+ for site in sites:occupied[site].append(i)
+assert len(atoms)==590 and len(occupied)==1155
+assert all(len(indices)==2 for indices in occupied.values())
+seen={0}; todo=[0]
+while todo:
+ i=todo.pop()
+ for site in atoms[i][1]:
+  for j in occupied[site]:
+   if j not in seen:seen.add(j);todo.append(j)
+assert len(seen)==590
+print('Construction:',dict(sorted(Counter(p for p,_ in atoms).items())))
+print('All 1155 points occupied twice; all 590 atoms connected.')
