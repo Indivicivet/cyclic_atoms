@@ -1,0 +1,35 @@
+# Cyclic atoms
+
+This is a maths / imaginary physics project investigating the properties of hypothetical "atoms" consisting of cyclic groups where each element must join to exactly one element of another cyclic group.
+
+# Repo structure
+
+## README.md
+
+high level overview of file structure
+
+## INTRO.md
+
+introduction to nomenclature, definitions, basic examples and basic properties
+
+this includes definition of unambiguous text formats for representing molecules
+
+## THEORY.md
+
+proven mathematical results, existence results, bounds, and conjectures for results
+
+## zoo/
+
+folder containing many examples of various structures (TODO)
+
+## visualization/
+
+scripts to visualize atoms and molecules in various ways (direct, pretty, topological, etc)
+
+## lean/
+
+formalized proofs in lean (TODO)
+
+## humanity/
+
+human-written scripts, musings, etc.
