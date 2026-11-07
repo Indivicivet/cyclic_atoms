@@ -91,7 +91,7 @@ root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root / "visualization"))
 import core
 
-atoms = core.read_atoms(root / "zoo/35711_max590.md")
+atoms = core.read_atoms(root / "zoo/35711.md#35711_max590")
 occ, _ = core.analyze(atoms)
 assert len(atoms) == 590 and len(occ) == 1155
 print("Construction:", dict(sorted(Counter(p for p, _, _ in atoms).items())))

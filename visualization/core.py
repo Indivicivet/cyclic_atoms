@@ -23,14 +23,37 @@ COLORS = {
 SHAPES = {2: "o", 3: "^", 4: "D", 5: "s", 7: "P", 11: "h"}
 
 
-def read_atoms(path):
-    path = Path(path)
+def read_atoms(target):
+    raw_path, _, section = str(target).partition("#")
+    path = Path(raw_path)
     text = path.read_text()
     if path.suffix == ".md":
-        match = re.search(r"```(0A|0B)\s*\n(.*?)\n```", text, re.DOTALL)
-        if not match:
+        blocks = [
+            (
+                headings[-1].strip() if headings else "",
+                m.group(1),
+                m.group(2),
+            )
+            for m in re.finditer(r"```(0A|0B)\s*\n(.*?)\n```", text, re.DOTALL)
+            for headings in [re.findall(r"(?:^|\n)#+\s*([^\n]+)", text[: m.start()])]
+        ]
+        if not blocks:
             raise ValueError("expected a fenced 0A or 0B block")
-        notation, body = match.groups()
+        if section:
+            matches = [(n, b) for h, n, b in blocks if h == section]
+            if not matches:
+                available = ", ".join(f"#{h}" for h, _, _ in blocks if h)
+                raise ValueError(
+                    f"section #{section} not found in {path} (available: {available})"
+                )
+            notation, body = matches[0]
+        elif len(blocks) == 1:
+            _, notation, body = blocks[0]
+        else:
+            available = ", ".join(f"#{h}" for h, _, _ in blocks if h)
+            raise ValueError(
+                f"multiple sections in {path}; specify one of: {available}"
+            )
         if notation == "0A":
             pattern = r"(?:\(\s*(\d+)\s*,\s*([+-]?\d+(?:/\d+)?)\s*\)|\[\s*(\d+)\s*,\s*([+-]?\d+(?:/\d+)?)\s*\])"
             entries = [
@@ -107,7 +130,16 @@ def describe(atoms):
     )
 
 
-def circle(atoms, output, title=None, highlight=0, dpi=180):
+def finish_figure(fig, output=None, dpi=180):
+    if output is None:
+        plt.show()
+    else:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(output, dpi=dpi)
+        plt.close(fig)
+
+
+def circle(atoms, output=None, title=None, highlight=0, dpi=180):
     occ, G = analyze(atoms)
     n = len(atoms)
     fig, ax = plt.subplots(figsize=(11, 11), subplot_kw={"aspect": "equal"})
@@ -170,11 +202,10 @@ def circle(atoms, output, title=None, highlight=0, dpi=180):
     ax.set_ylim(-1.05, 1.05)
     ax.axis("off")
     fig.tight_layout()
-    fig.savefig(output, dpi=dpi)
-    plt.close(fig)
+    finish_figure(fig, output, dpi)
 
 
-def graph(atoms, output, title=None, dpi=180):
+def graph(atoms, output=None, title=None, dpi=180):
     occ, G = analyze(atoms)
     if len(atoms) > 150:
         raise ValueError(
@@ -207,5 +238,4 @@ def graph(atoms, output, title=None, dpi=180):
     ax.axis("off")
     ax.set_title(title or f"{len(atoms)} atoms — bond graph; labels are 0A indices")
     fig.tight_layout()
-    fig.savefig(output, dpi=dpi)
-    plt.close(fig)
+    finish_figure(fig, output, dpi)

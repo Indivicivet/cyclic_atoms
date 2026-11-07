@@ -9,13 +9,12 @@ import core
 
 root = Path(__file__).resolve().parents[1]
 p = argparse.ArgumentParser()
-p.add_argument("--outdir", default=".")
+p.add_argument("--outdir", default=None)
 a = p.parse_args()
-out = Path(a.outdir)
-out.mkdir(parents=True, exist_ok=True)
-atoms = core.read_atoms(root / "zoo/3711_max.md")
+out = Path(a.outdir) if a.outdir else None
+atoms = core.read_atoms(root / "zoo/3711.md#3711_max")
 core.describe(atoms)
-core.circle(atoms, out / "3711_circle.png", "3–7–11: 106 atoms")
+core.circle(atoms, out / "3711_circle.png" if out else None, "3–7–11: 106 atoms")
 fig, ax = plt.subplots(figsize=(12, 8))
 for y in range(11):
     ax.plot([-0.15, 6.15], [y, y], color="#cb5964", lw=2)
@@ -37,5 +36,4 @@ ax.set_aspect("equal")
 ax.axis("off")
 ax.set_title("3–7–11: each dot is a 3-atom; row/column lines are its partners")
 fig.tight_layout()
-fig.savefig(out / "3711_structure.png", dpi=180)
-plt.close(fig)
+core.finish_figure(fig, out / "3711_structure.png" if out else None)
