@@ -22,7 +22,6 @@ class CurveData:
 
 @dataclass
 class CurveGenerator:
-    phase_space: int = 1
     n_up_atoms: int = 0
     n_down_atoms: int = 0
     n_thetas: int = 36000
@@ -68,14 +67,14 @@ class CurveGenerator:
         )
 
     def generate_all_curves(self, atom_data: dict[int, tuple[list[int], list[int]]]):
-        self.phase_space = int(np.lcm.reduce(list(atom_data.keys())))
+        phase_space = int(np.lcm.reduce(list(atom_data.keys())))
         up_atoms = []
         down_atoms = []
         for number, offsets in atom_data.items():
             for up_offset in offsets[0]:
-                up_atoms.append(Atom(number, Rational(up_offset, self.phase_space)))
+                up_atoms.append(Atom(number, Rational(up_offset, phase_space)))
             for down_offset in offsets[1]:
-                down_atoms.append(Atom(number, Rational(down_offset, self.phase_space)))
+                down_atoms.append(Atom(number, Rational(down_offset, phase_space)))
 
         self.n_up_atoms = len(up_atoms)
         self.n_down_atoms = len(down_atoms)
