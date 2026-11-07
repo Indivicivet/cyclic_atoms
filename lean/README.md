@@ -4,7 +4,7 @@ Lean 4.
 
 ## Usage
 
-Build with `lake build` in `lean/`.
+Build with `lake build` in `lean/`. The script `lake_rebuilt.bat` just does `lake clean` then `lake build`. If the build passes then the proofs are valid (but of course we must verify the statements match!).
 
 ## Definitions
 
