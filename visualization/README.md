@@ -3,8 +3,8 @@
 From the project root, install dependencies with `python -m pip install -r requirements.txt`, then run:
 
 ```sh
-python visualization/circle.py zoo/23_max.md circle.png
-python visualization/graph.py zoo/23_max.md graph.png
+python visualization/circle.py zoo/2_3_5_max.md circle.png
+python visualization/graph.py zoo/2_3_5_max.md graph.png
 python visualization/example_3711.py --outdir output
 python visualization/example_35711.py --outdir output
 ```

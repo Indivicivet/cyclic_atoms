@@ -13,7 +13,7 @@ occupancy and connectivity.
 | [two_and_five.md](two_and_five.md) | `2_5 5_2` | Two-prime construction |
 | [235_ten.md](235_ten.md) | `2_6 3_2 5_2` | Ten-atom structure |
 | [235_branches.md](235_branches.md) | `2_10 3_10 5_2` | Five copies of the four-atom 3-2-2-3 branch |
-| [23_max.md](23_max.md) | `2_15 3_5 5_3` | 23-atom maximum |
+| [2_3_5_max.md](2_3_5_max.md) | `2_15 3_5 5_3` | 23-atom maximum |
 | [3711_max.md](3711_max.md) | `3_77 7_22 11_7` | 106-atom maximum |
 | [35711_product.md](35711_product.md) | `3_385 5_77 7_55 11_35` | Product, 552 atoms |
 | [35711_mixed588.md](35711_mixed588.md) | `3_385 5_143 7_55 11_5` | Mixed, 588 atoms |

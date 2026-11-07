@@ -1,4 +1,4 @@
-"""Concentric view. Usage: python visualization/circle.py zoo/23_max.md out.png"""
+"""Concentric view. Usage: python visualization/circle.py zoo/2_3_5_max.md out.png"""
 
 import argparse
 

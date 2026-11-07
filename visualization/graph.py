@@ -1,4 +1,4 @@
-"""Bond graph. Usage: python visualization/graph.py zoo/23_max.md out.png"""
+"""Bond graph. Usage: python visualization/graph.py zoo/2_3_5_max.md out.png"""
 
 import argparse
 
