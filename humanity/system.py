@@ -50,10 +50,10 @@ def find_unpaired_peak_for_new_atom(new_atom_number: int, aligned_peaks: list[Ra
 class Molecule:
     def __init__(self, initial_up_atom_number: int):
         self.up_atoms: list[Atom] = []
-        self.up_atoms.append(Atom(initial_up_atom_number, Rational(0, 1)))
         self.down_atoms: list[Atom] = []
         self.up_peaks = []
         self.down_peaks = []
+        self.add_up_atom(Atom(initial_up_atom_number, Rational(0, 1)))
 
     def all_peaks_paired(self) -> bool:
         for up_atom in self.up_atoms:
