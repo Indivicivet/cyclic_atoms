@@ -69,3 +69,34 @@ An earlier search reported 35 molecules with element set $\{2, 3, 5\}$ up to rot
 Earlier MILP runs reported matching lower and upper bounds for $(2,3,5,7):159$, $(2,3,5,11):247$, $(2,3,7,11):337$, $(2,5,7,13):605$, $(3,5,7,11):590$, $(3,5,7,13):696$, $(3,5,11,13):1064$, $(3,7,11,13):1376$, and $(5,7,11,13):1662$, all of which agree with $M(s,p,q,r)$ above (which also gives $908$ for $(3,5,7,17)$ and $2104$ for $(3,7,13,17)$).
 
 A broader speculation is that for every finite set of at least two distinct primes there is a maximum molecule occupying every grid point twice, with all smallest-element atoms on one side of a bipartition and the other atoms on the other side. This remains open for five or more primes. Other questions are whether every molecule is bipartite, how to classify maxima and symmetries, what changes for composite elements, and which graphs admit physical geometric realisations.
+
+### General $n$-prime bounds and conjecture
+
+For any finite collection of $n \ge 2$ distinct primes $p_1 < p_2 < \dots < p_n$, the layered construction generalizes directly:
+1. Place all $p_1$-lines, giving $N_1 = \prod_{i=2}^n p_i = P / p_1$ atoms.
+2. For each $k \in \{2, \dots, n-1\}$, fill $p_{k-1} - 1$ layers of coordinate $x_{k-1}$ with $p_k$-lines, giving $N_k = (p_{k-1} - 1) \prod_{i=k+1}^n p_i$ atoms.
+3. In the final $p_{n-1} \times p_n$ subspace, place $N_n = p_{n-1}$ lines of type $p_n$.
+
+Because the incidence sum telescopes,
+$$
+\sum_{k=1}^n p_k N_k = P + \sum_{k=2}^{n-1} \left(\prod_{i=k-1}^n p_i - \prod_{i=k}^n p_i\right) + p_{n-1} p_n = 2P,
+$$
+every point of the grid $\prod_{i=1}^n \mathbb{Z}_{p_i}$ is incident to exactly two atoms. The bond graph is bipartite (with all $p_1$-atoms on one side) and connected via the $p_1$-lines. This establishes an explicit **lower bound** for all $n \ge 2$:
+
+$$
+M(p_1, \dots, p_n) \ge \prod_{i=2}^n p_i + \sum_{k=2}^{n-1} (p_{k-1} - 1) \prod_{i=k+1}^n p_i + p_{n-1}.
+$$
+
+Equivalently, this bound satisfies the recurrence:
+
+$$
+M(p_1, \dots, p_n) \ge p_n \bigl(M(p_1, \dots, p_{n-1}) - 1\bigr) + p_{n-1}, \quad M(p_1, p_2) = p_1 + p_2.
+$$
+
+**Conjecture (General Upper Bound):** The layered construction achieves the maximum possible size for any $n$ distinct primes:
+
+$$
+M(p_1, \dots, p_n) = \prod_{i=2}^n p_i + \sum_{k=2}^{n-1} (p_{k-1} - 1) \prod_{i=k+1}^n p_i + p_{n-1} = p_n \bigl(M(p_1, \dots, p_{n-1}) - 1\bigr) + p_{n-1}.
+$$
+
+This is proven for $n=2$ (uniqueness of $K_{q,p}$), $n=3$ ($M(s,p,q)$), and $n=4$ ($M(s,p,q,r)$), and supported by MILP relaxations across all tested parameter regimes, but remains open for $n \ge 5$.
