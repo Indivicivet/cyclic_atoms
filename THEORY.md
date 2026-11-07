@@ -1,6 +1,6 @@
 # Theory
 
-Definitions, conventions and notation are in [INTRO.md](INTRO.md). Unless otherwise stated, elements are distinct primes and molecules are finite and connected. Counts identify atoms even if their point sets coincide. Claims are separated by strength below.
+Definitions, conventions and notation are in [INTRO.md](INTRO.md). Unless otherwise stated, elements are primes. Counts identify atoms even if their point sets coincide. Claims are separated by strength below.
 
 ## Elementary facts
 
