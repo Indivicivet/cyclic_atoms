@@ -17,9 +17,12 @@ class Rational:
         new_denominator //= gcd
         new_numerator = new_numerator % new_denominator # only interested in rationals between 0 and 1
         return Rational(new_numerator, new_denominator)
+    
+    def __eq__(self, other):
+        return self.numerator == other.numerator and self.denominator == other.denominator
 
-    def __eq__(self, value):
-        return self.numerator == value.numerator and self.denominator == value.denominator
+    def __lt__(self, other):
+        return self.numerator * other.denominator < other.numerator * self.denominator
 
     def __str__(self):
         return f"{self.numerator}/{self.denominator}"
@@ -50,32 +53,22 @@ def find_unpaired_peak_for_new_atom(new_atom_number: int, aligned_peaks: list[Ra
 class Molecule:
     def __init__(self, initial_up_atom_number: int):
         self.up_atoms: list[Atom] = []
-        self.up_atoms.append(Atom(initial_up_atom_number, Rational(0, 1)))
         self.down_atoms: list[Atom] = []
         self.up_peaks = []
         self.down_peaks = []
+        self.add_up_atom(Atom(initial_up_atom_number, Rational(0, 1)))
 
     def all_peaks_paired(self) -> bool:
-        for up_atom in self.up_atoms:
-            for up_phase in get_phases(up_atom.number, up_atom.phase):
-                if up_phase not in self.down_peaks:
-                    return False
-        for down_atom in self.down_atoms:
-            for down_phase in get_phases(down_atom.number, down_atom.phase):
-                if down_phase not in self.up_peaks:
-                    return False
-        return True
+        return sorted(self.up_peaks) == sorted(self.down_peaks)
 
-    def add_up_atom(self, up_atom_number: int, phase: Rational):
-        up_atom = Atom(up_atom_number, phase)
+    def add_up_atom(self, up_atom: Atom):
         self.up_atoms.append(up_atom)
-        for p in get_phases(up_atom_number, phase):
+        for p in get_phases(up_atom.number, up_atom.phase):
             self.up_peaks.append(p)
 
-    def add_down_atom(self, down_atom_number: int, phase: Rational):
-        down_atom = Atom(down_atom_number, phase)
+    def add_down_atom(self, down_atom: Atom):
         self.down_atoms.append(down_atom)
-        for p in get_phases(down_atom_number, phase):
+        for p in get_phases(down_atom.number, down_atom.phase):
             self.down_peaks.append(p)
 
     def can_add_atom(self, new_atom_numbers: list[int]) -> bool:
@@ -89,23 +82,19 @@ class Molecule:
         return False
 
     def try_add_atom(self, new_atom_number: int) -> bool:
+        upnesses: list[bool] = []
         phase_for_new_up_atom = find_unpaired_peak_for_new_atom(new_atom_number, self.up_peaks, self.down_atoms)
-        can_add_up_atom = phase_for_new_up_atom is not None
-
+        if phase_for_new_up_atom is not None:
+            upnesses.append(True)
         phase_for_new_down_atom = find_unpaired_peak_for_new_atom(new_atom_number, self.down_peaks, self.up_atoms)
-        can_add_down_atom = phase_for_new_down_atom is not None
-        
-        if can_add_up_atom and can_add_down_atom:
-            if random.choice([True, False]):
-                self.add_up_atom(new_atom_number, phase_for_new_up_atom)
+        if phase_for_new_down_atom is not None:
+            upnesses.append(False)
+        if len(upnesses) > 0:
+            if random.choice(upnesses):
+                self.add_up_atom(Atom(new_atom_number, phase_for_new_up_atom))
             else:
-                self.add_down_atom(new_atom_number, phase_for_new_down_atom)
-        elif can_add_up_atom:
-            self.add_up_atom(new_atom_number, phase_for_new_up_atom)
-        elif can_add_down_atom:
-            self.add_down_atom(new_atom_number, phase_for_new_down_atom)
-
-        return can_add_up_atom or can_add_down_atom
+                self.add_down_atom(Atom(new_atom_number, phase_for_new_down_atom))
+        return len(upnesses) > 0
 
     def __str__(self):
         up_atoms_str = ', '.join([f"({atom.number}, {atom.phase})" for atom in self.up_atoms])
