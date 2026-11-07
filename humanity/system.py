@@ -59,15 +59,7 @@ class Molecule:
         self.add_up_atom(Atom(initial_up_atom_number, Rational(0, 1)))
 
     def all_peaks_paired(self) -> bool:
-        for up_atom in self.up_atoms:
-            for up_phase in get_phases(up_atom.number, up_atom.phase):
-                if up_phase not in self.down_peaks:
-                    return False
-        for down_atom in self.down_atoms:
-            for down_phase in get_phases(down_atom.number, down_atom.phase):
-                if down_phase not in self.up_peaks:
-                    return False
-        return True
+        return sorted(self.up_peaks) == sorted(self.down_peaks)
 
     def add_up_atom(self, up_atom: Atom):
         self.up_atoms.append(up_atom)
