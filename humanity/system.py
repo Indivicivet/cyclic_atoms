@@ -67,7 +67,6 @@ class Molecule:
             self.up_peaks.append(p)
 
     def add_down_atom(self, down_atom: Atom):
-        down_atom = Atom(down_atom.number, down_atom.phase)
         self.down_atoms.append(down_atom)
         for p in get_phases(down_atom.number, down_atom.phase):
             self.down_peaks.append(p)
