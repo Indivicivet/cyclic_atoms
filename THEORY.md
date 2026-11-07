@@ -4,9 +4,9 @@ Definitions and notation are in [INTRO.md](INTRO.md), with Lean 4 formalizations
 
 ## Elementary facts
 
-An element-$p$ atom has degree $p$ in the bond graph, counting multiple bonds. If $n_p$ is the number of $p$-atoms, then $2B = \sum_p p n_p$, where $B$ is the number of bonds. Thus the sum must be even (`two_mul_bonds_eq_sumDeg` and `even_sumDeg_of_paired` in [`lean/CyclicAtoms/Theory.lean`](lean/CyclicAtoms/Theory.lean)).
+An element-$p$ atom has degree $p$ in the bond graph, counting multiple bonds. If $n_p$ is the number of $p$-atoms, then $2B = \sum_p p n_p$, where $B$ is the number of bonds. Thus the sum must be even (`two_mul_bonds_eq_sumDeg` and `even_sumDeg_of_paired` in [`lean/CyclicAtoms/Elementary.lean`](lean/CyclicAtoms/Elementary.lean)).
 
-Two identical atoms pair every point with one another. They form a separate two-vertex molecule and cannot connect to a third atom (`identical_atoms_isolated` and `identical_atoms_molecule_only_two` in [`lean/CyclicAtoms/Theory.lean`](lean/CyclicAtoms/Theory.lean)).
+Two identical atoms pair every point with one another. They form a separate two-vertex molecule and cannot connect to a third atom (`identical_atoms_isolated` and `identical_atoms_molecule_only_two` in [`lean/CyclicAtoms/Elementary.lean`](lean/CyclicAtoms/Elementary.lean)).
 
 Set $L$ to the product of the distinct prime elements. Rotate a molecule so that one of its points is at 0. Moving along a $p$-atom changes a point by a multiple of $1/p$, and moving across a bond changes nothing. Connectivity therefore places every point, and a representative phase of every atom, in $\frac{1}{L}\mathbb{Z}/\mathbb{Z}$. The Chinese remainder theorem identifies this grid with the product of coordinate groups $\mathbb{Z}_p$: a $p$-atom is a full line in the $p$ direction. A rotation translates this grid.
 
@@ -36,7 +36,7 @@ Because $1 \le T \le sp$ and $q > p$, writing $k = \lceil T/p \rceil$ gives $T \
 
 To attain the bound, put an s-line at every $(p,q)$ coordinate. Fill $s-1$ s-coordinate layers with p-lines and the last with q-lines. Each point belongs to exactly two atoms. The graph is connected: the p-lines connect p-coordinates and the q-lines connect q-coordinates, through s-lines. The formula is $s_{pq}\,p_{(s-1)q}\,q_p$. For example, `3_77 7_22 11_7` has 106 atoms. When $s=2$, the formula is $2_{pq}\,p_q\,q_p$, and the graph is $K_{q,p}$ with every edge subdivided.
 
-The arithmetic step from the slice bound to $M(s,p,q)$ (`three_prime_upper_bound`) and the two-incidence property of the layered construction on $\mathbb{Z}_s \times \mathbb{Z}_p \times \mathbb{Z}_q$ (`three_prime_construction_twice`) are formalized in [`lean/CyclicAtoms/Theory.lean`](lean/CyclicAtoms/Theory.lean).
+The arithmetic step from the slice bound to $M(s,p,q)$ (`three_prime_upper_bound`) and the two-incidence property of the layered construction on $\mathbb{Z}_s \times \mathbb{Z}_p \times \mathbb{Z}_q$ (`three_prime_construction_twice`) are formalized in [`lean/CyclicAtoms/MaxSize.lean`](lean/CyclicAtoms/MaxSize.lean).
 
 ## Maximum size for four primes
 
@@ -48,38 +48,7 @@ $$
 M(s,p,q,r) = pqr + (s-1)qr + (p-1)r + q.
 $$
 
-### Proof sketch
-
-Group the $spqr$ grid sites by their $(q,r)$ coordinates $(y,z) \in \mathbb{Z}_q \times \mathbb{Z}_r$ into $qr$ slices of size $s \times p$. In slice $(y,z)$, let $a_{y,z}$ be the number of absent s-lines among $p$ possible ones, $b_{y,z}$ the number of absent p-lines among $s$, $d_{y,z} = a_{y,z} + b_{y,z}$ the total number of absent $(s,p)$-lines, $Q_z$ the number of q-lines at $r$-coordinate $z$, $R_y$ the number of r-lines at $q$-coordinate $y$, and $e_{y,z}$ the number of empty sites. Counting incidences in slice $(y,z)$ gives
-
-$$
-s a_{y,z} + p b_{y,z} = Q_z + R_y + 2e_{y,z}.
-$$
-
-Because $s < p$ and $e_{y,z} \ge 0$, every slice satisfies $Q_z + R_y \le p d_{y,z}$. Every slice also satisfies $d_{y,z} \ge 1$. If $Q_z + R_y > 0$, then $p d_{y,z} \ge Q_z + R_y \ge 1$ forces $d_{y,z} \ge 1$. If $Q_z + R_y = 0$, no q-line or r-line meets slice $(y,z)$. Since s-lines and p-lines stay inside the slice and the connected molecule contains q- and r-atoms, the slice must be empty, giving $d_{y,z} = s + p \ge 1$.
-
-Let $Q = \sum_{z \in \mathbb{Z}_r} Q_z \ge 1$ and $R = \sum_{y \in \mathbb{Z}_q} R_y \ge 1$ be the total numbers of q-atoms and r-atoms, and set $D_z = \sum_{y \in \mathbb{Z}_q} d_{y,z}$ and $D = \sum_{z \in \mathbb{Z}_r} D_z$. The molecule has size
-
-$$
-N = qr(s+p) - D + Q + R.
-$$
-
-In each column $z \in \mathbb{Z}_r$, summing $d_{y,z} \ge 1$ and $Q_z + R_y \le p d_{y,z}$ over $y \in \mathbb{Z}_q$ gives $D_z \ge q$ and $q Q_z + R \le p D_z$. Adding $(q-p)q \le (q-p)D_z$ yields
-
-$$
-q(Q_z + q - p) + R \le q D_z.
-$$
-
-There are two cases depending on how $R$ compares to $q$:
-
-1. If $R \le q$, then $R \ge 1$ gives $q(Q_z + q - p) + 1 \le q D_z$, so $Q_z + q - p + 1 \le D_z$ for every $z$. Summing over all $r$ columns gives $Q + r(q - p + 1) \le D$, and adding $R \le q$ yields $Q + R + qr \le D + (p-1)r + q$.
-2. If $R \ge q$, summing $q(Q_z + q - p) + R \le q D_z$ over all $r$ columns gives $q Q + r R + qr(q - p) \le q D$. Since $r \ge q$ and $R \ge q$, we have $(r - q)(R - q) \ge 0$, or $r R \ge q R + q(r - q)$. Substituting this lower bound for $r R$ and dividing by $q$ again yields $Q + R + qr \le D + (p-1)r + q$.
-
-In both cases $Q + R - D \le (p-1)r + q - qr$, so
-
-$$
-N = qr(s+p) - D + Q + R \le qr(s+p-1) + (p-1)r + q = pqr + (s-1)qr + (p-1)r + q.
-$$
+### Construction and proof idea
 
 To attain the bound, place all s-lines, fill $s-1$ s-layers with p-lines, and in the last s-layer fill $p-1$ p-coordinate slices with q-lines and the last slice with r-lines. This gives a connected molecule with formula
 
@@ -89,11 +58,9 @@ $$
 
 in which every grid point has two incidences.
 
-The slice bound (`four_prime_slice_bound`), single-column step (`four_prime_column_bound`), column aggregation (`validColumns_aggregate`), deficit bound (`four_prime_deficit_bound`), upper bound (`four_prime_upper_bound` and `four_prime_upper_bound_of_columns`), and two-incidence property of the layered construction on $\mathbb{Z}_s \times \mathbb{Z}_p \times \mathbb{Z}_q \times \mathbb{Z}_r$ (`four_prime_construction_twice`) are formalized in [`lean/CyclicAtoms/Theory.lean`](lean/CyclicAtoms/Theory.lean).
+For the upper bound, group the grid into $qr$ slices of size $s \times p$ by $(q,r)$ coordinates. In each slice $(y,z)$, incidence counting bounds the missing $(s,p)$-lines by $p d_{y,z} \ge Q_z + R_y$, while connectivity forces $d_{y,z} \ge 1$. Summing down each r-column $z$ and comparing the total r-atom count $R$ against $q$ shows that the slice-incidence relaxation is already bounded by $M(s,p,q,r)$. See [PROOF_SKETCHES.md](PROOF_SKETCHES.md) for the full proof sketch and [`lean/CyclicAtoms/MaxSize.lean`](lean/CyclicAtoms/MaxSize.lean) for the Lean 4 formalization (`four_prime_upper_bound`, `four_prime_upper_bound_of_columns`, and `four_prime_construction_twice`).
 
-### Examples for $\{3, 5, 7, 11\}$
-
-For $\{3, 5, 7, 11\}$ the maximum construction gives `3_385 5_154 7_44 11_7`, with 590 atoms. The script `verification/verify_max_35711.py` checks this construction and solves the corresponding slice-incidence MILP relaxation on the 77 groups of size $3 \times 5$. For comparison, the symmetric three-layer product `3_385 5_77 7_55 11_35` has 552 atoms, and a mixed example `3_385 5_143 7_55 11_5` has 588. Thus the symmetric product is not always maximal.
+For $\{3, 5, 7, 11\}$ the maximum construction gives `3_385 5_154 7_44 11_7`, with 590 atoms (`verification/verify_max_35711.py`). For comparison, the symmetric three-layer product `3_385 5_77 7_55 11_35` has 552 atoms, and a mixed example `3_385 5_143 7_55 11_5` has 588. Thus the symmetric product is not always maximal.
 
 ## Enumeration and speculative questions
 

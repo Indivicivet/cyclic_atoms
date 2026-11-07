@@ -1,2 +1,3 @@
 import CyclicAtoms.Defs
-import CyclicAtoms.Theory
+import CyclicAtoms.Elementary
+import CyclicAtoms.MaxSize
