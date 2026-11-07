@@ -17,9 +17,12 @@ class Rational:
         new_denominator //= gcd
         new_numerator = new_numerator % new_denominator # only interested in rationals between 0 and 1
         return Rational(new_numerator, new_denominator)
+    
+    def __eq__(self, other):
+        return self.numerator == other.numerator and self.denominator == other.denominator
 
-    def __eq__(self, value):
-        return self.numerator == value.numerator and self.denominator == value.denominator
+    def __lt__(self, other):
+        return self.numerator * other.denominator < other.numerator * self.denominator
 
     def __str__(self):
         return f"{self.numerator}/{self.denominator}"
