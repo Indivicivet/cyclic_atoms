@@ -1,0 +1,2 @@
+lake clean
+lake build
