@@ -1,9 +1,11 @@
 """Generate the circle and row-column connectivity views for 3,7,11."""
 
-from pathlib import Path
 import argparse
+from pathlib import Path
+
 import matplotlib.pyplot as plt
-from core import read_atoms, describe, circle
+
+import core
 
 root = Path(__file__).resolve().parents[1]
 p = argparse.ArgumentParser()
@@ -11,9 +13,9 @@ p.add_argument("--outdir", default=".")
 a = p.parse_args()
 out = Path(a.outdir)
 out.mkdir(parents=True, exist_ok=True)
-atoms = read_atoms(root / "zoo/3711_max.md")
-describe(atoms)
-circle(atoms, out / "3711_circle.png", "3–7–11: 106 atoms")
+atoms = core.read_atoms(root / "zoo/3711_max.md")
+core.describe(atoms)
+core.circle(atoms, out / "3711_circle.png", "3–7–11: 106 atoms")
 fig, ax = plt.subplots(figsize=(12, 8))
 for y in range(11):
     ax.plot([-0.15, 6.15], [y, y], color="#cb5964", lw=2)
@@ -22,9 +24,13 @@ for x in range(7):
     for d in (-0.08, 0.08):
         ax.plot([x + d, x + d], [-0.2, 10.2], color="#168d84", lw=1.5)
     ax.text(x, 10.45, "7 + 7", color="#168d84", ha="center")
-for x in range(7):
-    for y in range(11):
-        ax.scatter(x, y, c="#8159af", s=34, zorder=3)
+ax.scatter(
+    [x for x in range(7) for y in range(11)],
+    [y for x in range(7) for y in range(11)],
+    c=core.COLORS[3],
+    s=34,
+    zorder=3,
+)
 ax.set_xlim(-0.5, 7)
 ax.set_ylim(-0.5, 11)
 ax.set_aspect("equal")

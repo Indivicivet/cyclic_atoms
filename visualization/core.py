@@ -3,9 +3,9 @@
 import ast
 import json
 import re
-from collections import Counter, defaultdict, deque
+from collections import Counter, defaultdict
 from fractions import Fraction
-from math import cos, lcm, pi, sin
+from math import cos, pi, prod, sin
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -36,18 +36,14 @@ def read_atoms(path):
             entries = re.findall(pattern, body)
             if not entries or re.sub(pattern, "", body).replace(",", "").strip():
                 raise ValueError("invalid 0A notation")
-            return [
-                (int(p), Fraction(a) % Fraction(1, int(p)), None) for p, a in entries
-            ]
-        data = ast.literal_eval("{" + body + "}")
+            data = entries
+        else:
+            data = ast.literal_eval("{" + body + "}")
     else:
         data = json.loads(text)
     if isinstance(data, list):
         return [(int(p), Fraction(a) % Fraction(1, int(p)), None) for p, a in data]
-    primes = [int(p) for p in data]
-    L = 1
-    for p in primes:
-        L *= p
+    grid_size = prod(int(p) for p in data)
     atoms = []
     for key, groups in data.items():
         p = int(key)
@@ -55,9 +51,9 @@ def read_atoms(path):
             raise ValueError("0B needs [outward, inward]")
         for color, inds in enumerate(groups):
             for i in inds:
-                if not isinstance(i, int) or not 0 <= i < L:
+                if not isinstance(i, int) or not 0 <= i < grid_size:
                     raise ValueError("index outside grid")
-                atoms.append((p, Fraction(i, L) % Fraction(1, p), color))
+                atoms.append((p, Fraction(i, grid_size) % Fraction(1, p), color))
     return atoms
 
 
@@ -96,7 +92,7 @@ def analyze(atoms):
 
 
 def describe(atoms):
-    occ, G = analyze(atoms)
+    occ, graph = analyze(atoms)
     print(
         "Atoms:",
         len(atoms),
@@ -105,7 +101,7 @@ def describe(atoms):
         "bonds:",
         len(occ),
         "bipartite:",
-        nx.is_bipartite(G),
+        nx.is_bipartite(graph),
     )
 
 
@@ -114,9 +110,9 @@ def circle(atoms, output, title=None, highlight=0, dpi=180):
     n = len(atoms)
     fig, ax = plt.subplots(figsize=(11, 11), subplot_kw={"aspect": "equal"})
     radii = [0.13 + 0.79 * (i / max(1, n - 1)) for i in range(n)]
-    for i, (p, a, c) in enumerate(atoms):
+    for i, atom in enumerate(atoms):
         rad = radii[i]
-        col = COLORS.get(p, "#666666")
+        col = COLORS.get(atom[0], "#666666")
         ax.add_patch(
             plt.Circle(
                 (0, 0),
@@ -127,7 +123,7 @@ def circle(atoms, output, title=None, highlight=0, dpi=180):
                 alpha=0.55,
             )
         )
-        angles = [2 * pi * float(x) for x in sites(atoms[i])]
+        angles = [2 * pi * float(x) for x in sites(atom)]
         ax.scatter(
             [rad * sin(t) for t in angles],
             [rad * cos(t) for t in angles],
