@@ -38,30 +38,67 @@ To attain the bound, put an s-line at every $(p,q)$ coordinate. Fill $s-1$ s-coo
 
 The arithmetic step from the slice bound to $M(s,p,q)$ (`three_prime_upper_bound`) and the two-incidence property of the layered construction on $\mathbb{Z}_s \times \mathbb{Z}_p \times \mathbb{Z}_q$ (`three_prime_construction_twice`) are formalized in [`lean/CyclicAtoms/Theory.lean`](lean/CyclicAtoms/Theory.lean).
 
-## Constructions for four primes
+## Maximum size for four primes
 
-For $s < p < q < r$, there is a connected construction with formula
+### Theorem
+
+For primes $s < p < q < r$, the maximum size of a molecule with element set $\{s, p, q, r\}$ is
+
+$$
+M(s,p,q,r) = pqr + (s-1)qr + (p-1)r + q.
+$$
+
+### Proof sketch
+
+Group the $spqr$ grid sites by their $(q,r)$ coordinates $(y,z) \in \mathbb{Z}_q \times \mathbb{Z}_r$ into $qr$ slices of size $s \times p$. In slice $(y,z)$, let $a_{y,z}$ be the number of absent s-lines among $p$ possible ones, $b_{y,z}$ the number of absent p-lines among $s$, $d_{y,z} = a_{y,z} + b_{y,z}$ the total number of absent $(s,p)$-lines, $Q_z$ the number of q-lines at $r$-coordinate $z$, $R_y$ the number of r-lines at $q$-coordinate $y$, and $e_{y,z}$ the number of empty sites. Counting incidences in slice $(y,z)$ gives
+
+$$
+s a_{y,z} + p b_{y,z} = Q_z + R_y + 2e_{y,z}.
+$$
+
+Because $s < p$ and $e_{y,z} \ge 0$, every slice satisfies $Q_z + R_y \le p d_{y,z}$. Every slice also satisfies $d_{y,z} \ge 1$. If $Q_z + R_y > 0$, then $p d_{y,z} \ge Q_z + R_y \ge 1$ forces $d_{y,z} \ge 1$. If $Q_z + R_y = 0$, no q-line or r-line meets slice $(y,z)$. Since s-lines and p-lines stay inside the slice and the connected molecule contains q- and r-atoms, the slice must be empty, giving $d_{y,z} = s + p \ge 1$.
+
+Let $Q = \sum_{z \in \mathbb{Z}_r} Q_z \ge 1$ and $R = \sum_{y \in \mathbb{Z}_q} R_y \ge 1$ be the total numbers of q-atoms and r-atoms, and set $D_z = \sum_{y \in \mathbb{Z}_q} d_{y,z}$ and $D = \sum_{z \in \mathbb{Z}_r} D_z$. The molecule has size
+
+$$
+N = qr(s+p) - D + Q + R.
+$$
+
+In each column $z \in \mathbb{Z}_r$, summing $d_{y,z} \ge 1$ and $Q_z + R_y \le p d_{y,z}$ over $y \in \mathbb{Z}_q$ gives $D_z \ge q$ and $q Q_z + R \le p D_z$. Adding $(q-p)q \le (q-p)D_z$ yields
+
+$$
+q(Q_z + q - p) + R \le q D_z.
+$$
+
+There are two cases depending on how $R$ compares to $q$:
+
+1. If $R \le q$, then $R \ge 1$ gives $q(Q_z + q - p) + 1 \le q D_z$, so $Q_z + q - p + 1 \le D_z$ for every $z$. Summing over all $r$ columns gives $Q + r(q - p + 1) \le D$, and adding $R \le q$ yields $Q + R + qr \le D + (p-1)r + q$.
+2. If $R \ge q$, summing $q(Q_z + q - p) + R \le q D_z$ over all $r$ columns gives $q Q + r R + qr(q - p) \le q D$. Since $r \ge q$ and $R \ge q$, we have $(r - q)(R - q) \ge 0$, or $r R \ge q R + q(r - q)$. Substituting this lower bound for $r R$ and dividing by $q$ again yields $Q + R + qr \le D + (p-1)r + q$.
+
+In both cases $Q + R - D \le (p-1)r + q - qr$, so
+
+$$
+N = qr(s+p) - D + Q + R \le qr(s+p-1) + (p-1)r + q = pqr + (s-1)qr + (p-1)r + q.
+$$
+
+To attain the bound, place all s-lines, fill $s-1$ s-layers with p-lines, and in the last s-layer fill $p-1$ p-coordinate slices with q-lines and the last slice with r-lines. This gives a connected molecule with formula
 
 $$
 s_{pqr}\,p_{(s-1)qr}\,q_{(p-1)r}\,r_q
 $$
 
-and size $pqr + (s-1)qr + (p-1)r + q$. Place all s-lines; fill $s-1$ s-layers with p-lines, then in the last layer fill $p-1$ p-coordinate slices with q-lines and the last slice with r-lines. Every grid point has exactly two incidences and the graph is connected.
+in which every grid point has two incidences.
 
-We conjecture that this construction is maximum for all four distinct primes.
+The slice bound (`four_prime_slice_bound`), single-column step (`four_prime_column_bound`), column aggregation (`validColumns_aggregate`), deficit bound (`four_prime_deficit_bound`), upper bound (`four_prime_upper_bound` and `four_prime_upper_bound_of_columns`), and two-incidence property of the layered construction on $\mathbb{Z}_s \times \mathbb{Z}_p \times \mathbb{Z}_q \times \mathbb{Z}_r$ (`four_prime_construction_twice`) are formalized in [`lean/CyclicAtoms/Theory.lean`](lean/CyclicAtoms/Theory.lean).
 
-For $\{3, 5, 7, 11\}$ it gives `3_385 5_154 7_44 11_7`, with 590 atoms. The integer optimisation in `verification/verify_max_35711.py` gives an upper bound of 590 for a relaxation of the connected problem. It uses floating-point MILP, so the result is subject to solver tolerances and is not a solver-independent proof certificate. The script also checks the construction.
+### Examples for $\{3, 5, 7, 11\}$
 
-### The 590 upper-bound relaxation
-
-Group the 1155 grid sites by their $(7,11)$ coordinates into 77 grids of size $3 \times 5$. In group $(y,z)$, let $a$ be the number of absent 3-lines among five possible ones, $b$ the number of absent 5-lines among three, $Q_z$ the number of 7-lines at that 11-coordinate, $R_y$ the number of 11-lines at that 7-coordinate, and $e$ the number of empty sites. Counting incidences gives $3a+5b=Q_z+R_y+2e$. Connectivity implies that a group with $Q_z+R_y=0$ must be empty, since no larger line can join it to another group. The MILP maximises the number of lines subject to these necessary constraints and the existence of both 7- and 11-atoms. It does not require the local counts to arise from a consistent physical arrangement, so it is an upper-bound relaxation. The supplied script obtains bound 590 and checks a construction attaining it.
-
-For comparison, the symmetric three-layer product `3_385 5_77 7_55 11_35` has 552 atoms. A mixed example `3_385 5_143 7_55 11_5` has 588. Thus the symmetric product is not always maximal.
+For $\{3, 5, 7, 11\}$ the maximum construction gives `3_385 5_154 7_44 11_7`, with 590 atoms. The script `verification/verify_max_35711.py` checks this construction and solves the corresponding slice-incidence MILP relaxation on the 77 groups of size $3 \times 5$. For comparison, the symmetric three-layer product `3_385 5_77 7_55 11_35` has 552 atoms, and a mixed example `3_385 5_143 7_55 11_5` has 588. Thus the symmetric product is not always maximal.
 
 ## Enumeration and speculative questions
 
 An earlier search reported 35 molecules with element set $\{2, 3, 5\}$ up to rotation, and also 35 up to rotation and reflection; all 35 were bipartite. The original enumeration script is not available in this package, so this result has not been reproduced here. The same applies to the report that the 23-atom maximum is unique up to rotation.
 
-Earlier MILP runs reported matching lower and upper bounds for $(2,3,5,7):159$, $(2,3,5,11):247$, $(2,3,7,11):337$, $(2,5,7,13):605$, $(3,5,7,11):590$, $(3,5,7,13):696$, $(3,5,11,13):1064$, $(3,7,11,13):1376$, and $(5,7,11,13):1662$. Only the 3,5,7,11 verification is included here; the others remain unreproduced reports. Runs for $(3,5,7,17)$ and $(3,7,13,17)$ did not close the gap.
+Earlier MILP runs reported matching lower and upper bounds for $(2,3,5,7):159$, $(2,3,5,11):247$, $(2,3,7,11):337$, $(2,5,7,13):605$, $(3,5,7,11):590$, $(3,5,7,13):696$, $(3,5,11,13):1064$, $(3,7,11,13):1376$, and $(5,7,11,13):1662$, all of which agree with $M(s,p,q,r)$ above (which also gives $908$ for $(3,5,7,17)$ and $2104$ for $(3,7,13,17)$).
 
-A broader speculation is that for every finite set of at least two distinct primes there is a maximum molecule occupying every grid point twice, with all smallest-element atoms on one side of a bipartition and the other atoms on the other side. This has been less tested than the four-prime conjecture. Other questions are whether every molecule is bipartite, how to classify maxima and symmetries, what changes for composite elements, and which graphs admit physical geometric realisations.
+A broader speculation is that for every finite set of at least two distinct primes there is a maximum molecule occupying every grid point twice, with all smallest-element atoms on one side of a bipartition and the other atoms on the other side. This remains open for five or more primes. Other questions are whether every molecule is bipartite, how to classify maxima and symmetries, what changes for composite elements, and which graphs admit physical geometric realisations.
