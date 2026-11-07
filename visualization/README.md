@@ -3,13 +3,13 @@
 From the project root, install dependencies with `python -m pip install -r requirements.txt`, then run:
 
 ```sh
-python visualization/circle.py zoo/23_max.json circle.png
-python visualization/graph.py zoo/23_max.json graph.png
+python visualization/circle.py zoo/23_max.md circle.png
+python visualization/graph.py zoo/23_max.md graph.png
 python visualization/example_3711.py --outdir output
 python visualization/example_35711.py --outdir output
 ```
 
-Both general renderers accept rational 0A JSON and signed 0B JSON. They check exact bond occupancy, connectivity and, for 0B, opposite colours. The circular view shows one ring per atom and one dot per point, with a highlighted atom and its bonds; use `--highlight INDEX` to select a different input-list index. Dots with the same angle are bonded. Spokes are schematic; crossings do not form bonds. Large examples are best viewed zoomed in.
+Both general renderers accept the zoo's Markdown 0A and signed 0B blocks, as well as rational 0A JSON and signed 0B JSON. They check exact bond occupancy, connectivity and, for 0B, opposite colours. The circular view shows one ring per atom and one dot per point, with a highlighted atom and its bonds; use `--highlight INDEX` to select a different input-list index. Dots with the same angle are bonded. Spokes are schematic; crossings do not form bonds. Large examples are best viewed zoomed in.
 
 The graph shows atoms as vertices, with element encoded by colour and shape. Vertex numbers are input indices. Crossings do not create bonds. Parallel bonds may overlap visually; multiplicity remains in the data. To keep the graph readable, it rejects molecules over 150 atoms; use the structured layer view for larger examples.
 

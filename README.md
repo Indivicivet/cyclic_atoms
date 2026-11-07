@@ -20,7 +20,7 @@ proven mathematical results, existence results, bounds, and conjectures for resu
 
 ## zoo/
 
-folder containing many examples of various structures (TODO)
+examples of various structures in exact 0A and 0B notation
 
 ## visualization/
 
