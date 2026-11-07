@@ -14,13 +14,17 @@ For distinct primes $p$ and $q$, the only molecule with element set $\{p, q\}$ h
 
 An in/out assignment exists exactly when the bond graph is bipartite. This does not imply that the graph is planar or has a physical circle-contact realisation. For example, the 23-atom construction for $\{2, 3, 5\}$ below has graph $K_{5,3}$ with every edge subdivided. It is bipartite but non-planar. Whether every prime-element molecule is bipartite remains open here.
 
-## Maximum for three primes: theorem
+## Maximum size for three primes
+
+### Theorem
 
 For primes $s < p < q$, the maximum size of a molecule with element set $\{s, p, q\}$ is
 
 $$
 M(s,p,q) = pq + (s-1)q + p.
 $$
+
+### Proof sketch
 
 For the upper bound, regard the grid as $q$ slices of size $s \times p$, and let $T$ be the number of q-atoms. In each slice there are $p$ possible s-lines and $s$ possible p-lines. If all are present they supply two incidences per point. To accommodate the $T$ q-line incidences, at least $\lceil T/p \rceil$ of these lines must be missing in each slice: each removed line frees at most $p$ incidences. This also holds when some points are unused. Thus
 

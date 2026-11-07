@@ -32,8 +32,10 @@ def read_atoms(path):
             raise ValueError("expected a fenced 0A or 0B block")
         notation, body = match.groups()
         if notation == "0A":
-            pattern = r"\(\s*(\d+)\s*,\s*([+-]?\d+(?:/\d+)?)\s*\)"
-            entries = re.findall(pattern, body)
+            pattern = r"(?:\(\s*(\d+)\s*,\s*([+-]?\d+(?:/\d+)?)\s*\)|\[\s*(\d+)\s*,\s*([+-]?\d+(?:/\d+)?)\s*\])"
+            entries = [
+                (p1 or p2, a1 or a2) for p1, a1, p2, a2 in re.findall(pattern, body)
+            ]
             if not entries or re.sub(pattern, "", body).replace(",", "").strip():
                 raise ValueError("invalid 0A notation")
             data = entries

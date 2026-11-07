@@ -28,7 +28,11 @@ scripts to visualize atoms and molecules in various ways (direct, pretty, topolo
 
 ## [lean/](lean/)
 
-formalized proofs in lean (TODO)
+formalized proofs in lean (TODO expand)
+
+## [verification/](verification/)
+
+scratch scripts for verification
 
 ## [humanity/](humanity/)
 

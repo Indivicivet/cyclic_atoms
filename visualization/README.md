@@ -16,5 +16,3 @@ The graph shows atoms as vertices, with element encoded by colour and shape. Ver
 The 3–7–11 map has a dot per 3-atom. Each row is an 11-atom; each pair of column lines represents two 7-atoms.
 
 The 590-atom map displays three $5 \times 7$ slices, each square representing all 11 values of $z$. Each 3-atom joins corresponding $(x,y,z)$ in all three layers. In layers 0 and 1, 5-atoms run along $x$ at fixed $(y,z)$. In layer 2, 7-atoms run along $y$ at fixed $(x,z)$ for $x=0,\ldots,3$; 11-atoms run along $z$ at fixed $(x=4,y)$. Colours indicate element, not individual atom identity.
-
-Original images from the conversation are in `images/`. Their original plotting source was not available; these are new reproducible scripts for the same types of visualisation.
