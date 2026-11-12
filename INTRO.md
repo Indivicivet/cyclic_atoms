@@ -30,6 +30,8 @@ We can cut a configuration into separately rotatable fragments and join fragment
 
 The atom, configuration, and molecule definitions are formalized in Lean 4 in [`lean/CyclicAtoms/Defs.lean`](lean/CyclicAtoms/Defs.lean) (see [`lean/README.md`](lean/README.md)).
 
+If every intermediate must consist entirely of molecules, the three-copy split cannot be composed from reactions with at most two inputs and two outputs, starting with only maxima. [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md) gives the obstruction and the possible small closed reaction formulas.
+
 ## Basic examples
 
 Two identical atoms $(2, 0), (2, 0)$ form a molecule with two vertices joined by two bonds. The atoms are distinct even though their points coincide.

@@ -1,5 +1,7 @@
 # Chemistry of cyclic atoms
 
+For reactions whose states contain only molecules, see [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md). The 3→19 split cannot be composed from closed steps with at most two inputs and two outputs, starting with only maxima and no additional reagents.
+
 We can define reactions where atoms stay intact, bonds break, and exposed points pair with points on other fragments. Two constraints govern which reactions exist. Element counts must match, and new bonds must come from exact coincidences of cyclic point sets.
 
 For distinct prime elements 3, 5, and 7, write `M35 = 3_5 5_3`, `M37 = 3_7 7_3`, `M57 = 5_7 7_5`, and `Dp = p_2`. Let `Tmax = 3_35 5_14 7_5` be the 54-atom maximum molecule.

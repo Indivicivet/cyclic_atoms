@@ -8,6 +8,7 @@ from itertools import product
 import networkx as nx
 import numpy as np
 
+import chemistry.closed_reactions as closed
 import chemistry.examples as examples
 import chemistry.minimum_split as splitting
 import chemistry.model as model
@@ -16,6 +17,34 @@ import visualization.core as core
 
 
 class ChemistryChecks(unittest.TestCase):
+    def test_closed_reaction_catalog_and_frozen_maxima(self):
+        witnesses = closed.catalog()
+        self.assertEqual(len(witnesses), 86)
+        self.assertEqual(max(map(sum, witnesses)), 54)
+        self.assertEqual([f for f in witnesses if sum(f) == 54], [(35, 14, 5)])
+        for formula, atoms in witnesses.items():
+            core.analyze(atoms)
+            self.assertEqual(
+                tuple(model.formula(atoms).get(p, 0) for p in (3, 5, 7)), formula
+            )
+        channels = closed.reactions(witnesses)
+        splits = [(left, right) for left, right in channels if len(left) != len(right)]
+        self.assertEqual(len(splits), 2)
+        self.assertEqual(
+            sum(len(left) == len(right) == 2 for left, right in channels), 1657
+        )
+        for left, right in channels:
+            self.assertEqual(closed.inventory(left), closed.inventory(right))
+            self.assertFalse(all(m == (35, 14, 5) for m in left))
+            self.assertFalse(all(m == (35, 14, 5) for m in right))
+        self.assertEqual(
+            set(splits),
+            {
+                (((18, 12, 6),), ((5, 3, 0), (13, 9, 6))),
+                (((22, 12, 6),), ((5, 3, 0), (17, 9, 6))),
+            },
+        )
+
     def test_minimum_cut_split_every_move(self):
         reaction = splitting.minimum_split()
         state = reaction["stages"][0]["atoms"]
