@@ -1,6 +1,8 @@
 # Small closed reactions
 
-Starting with only maximum 3–5–7 molecules, we cannot reach binary products through closed reactions with at most two molecules on either side. This holds for three starting maxima, or any number of them. There is no first step that changes their formulas, even if dimers and every other 3–5–7 molecule are admitted as possible intermediates.
+A maximum 3–5–7 molecule can be an output of a nontrivial 2→2 reaction: the complete catalog contains 29 such formula channels. The smallest example is `M35 + T(30,13,5) → Tmax + D5`, with sizes `8 + 48 → 54 + 2`.
+
+The separate obstruction proved below concerns starting with only maxima. It does not exclude forming a maximum from other molecules, or reacting a maximum with a different partner.
 
 ## What "no free atoms" requires
 
@@ -38,7 +40,26 @@ The extracted 3-atoms leave as an already bonded dimer in this description. The 
 
 The complete catalog has 86 molecular formulas: 80 using all three elements, three binary formulas and three dimer formulas. Completeness follows from the parity classification in [CHEMISTRY.md](CHEMISTRY.md). Connectivity and double occupancy are checked for every witness. We group singleton and unordered pair inventories by their element counts and match equal inventories. Equations with the same formula multiset on both sides are excluded. Geometric isomers and formula-preserving isomerizations are not counted separately.
 
-## Why maxima cannot start reacting
+## Two molecules producing a maximum
+
+Here are four of the 29 nontrivial formula channels. The notation is `T(a,b,c) = 3_a 5_b 7_c`.
+
+| Reactants | Products | Atom counts |
+|---|---|---|
+| `M35 + T(30,13,5)` | `Tmax + D5` | `8 + 48 → 54 + 2` |
+| `T(16,9,7) + T(19,12,3)` | `Tmax + M57` | `32 + 34 → 54 + 12` |
+| `2 T(20,11,5)` | `Tmax + T(5,8,5)` | `36 + 36 → 54 + 18` |
+| `2 T(25,12,5)` | `Tmax + T(15,10,5)` | `42 + 42 → 54 + 30` |
+
+The first achieves the smallest possible total input size, 56: the second output must contain at least two atoms. It is the only formula channel producing a maximum plus a dimer. All 29 channels and exact witnesses are saved under `maximum_as_product` in the JSON output.
+
+The first also has an exact ten-bond exchange construction. In CRT coordinates, `T(30,13,5)` has six full z-slices and one exceptional 5-atom in the remaining slice. Place M35 in that remaining slice. The supports intersect precisely in that exceptional 5-atom's five points, which also form one of M35's 5-atoms.
+
+Splice out those two 5-atoms. Their ten old bonds are replaced by five cross-bonds between the remaining fragments and five parallel bonds between the extracted atoms. The products are exactly the maximum and D5. The maximum retains 100 original bonds across the two reactants. In a concerted description the extracted atoms form their dimer in the same event; a sequential cut-first realization would expose them and would not satisfy a no-free-atoms requirement.
+
+`maximum_exchange()` in the enumeration script constructs and verifies the exact endpoint geometry. The other 28 entries are checked balanced endpoint candidates; no particular low-cut mechanism is asserted for them.
+
+## Why a collection of only maxima cannot start changing
 
 Let `Tmax = T(35,14,5)`, with 54 atoms, the maximum molecular size for these elements.
 

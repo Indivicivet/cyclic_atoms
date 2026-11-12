@@ -17,6 +17,29 @@ import visualization.core as core
 
 
 class ChemistryChecks(unittest.TestCase):
+    def test_maximum_as_a_product(self):
+        channels = closed.maximum_products(closed.catalog())
+        self.assertEqual(len(channels), 29)
+        self.assertEqual(
+            channels[0],
+            (((5, 3, 0), (30, 13, 5)), ((0, 2, 0), (35, 14, 5))),
+        )
+        example = closed.maximum_exchange()
+        for atoms in example["reactants"] + example["products"]:
+            core.analyze(atoms)
+        self.assertEqual(model.formula(example["products"][0]), {3: 35, 5: 14, 7: 5})
+        self.assertEqual(model.formula(example["products"][1]), {5: 2})
+        self.assertEqual(
+            Counter(example["products"][0]),
+            Counter(model.weight_configuration((3, 5, 7), (1, 0, 7))),
+        )
+        for reactant, fragment in zip(example["reactants"], example["fragments"]):
+            self.assertEqual(
+                core.analyze(reactant)[1].number_of_edges()
+                - model.inspect_open(fragment)[1].number_of_edges(),
+                5,
+            )
+
     def test_closed_reaction_catalog_and_frozen_maxima(self):
         witnesses = closed.catalog()
         self.assertEqual(len(witnesses), 86)

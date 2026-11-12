@@ -53,6 +53,57 @@ def reactions(witnesses):
     )
 
 
+def maximum_products(witnesses):
+    """Orient nontrivial 2->2 channels to put Tmax on the product side."""
+    maximum = (35, 14, 5)
+    return tuple(
+        sorted(
+            (
+                (left, right) if maximum in right else (right, left)
+                for left, right in reactions(witnesses)
+                if len(left) == len(right) == 2 and maximum in left + right
+            ),
+            key=lambda channel: (
+                sum(inventory(channel[0])),
+                max(map(sum, channel[0])),
+                channel,
+            ),
+        )
+    )
+
+
+def maximum_exchange():
+    """Closed endpoints of M35 + T(30,13,5) -> Tmax + D5.
+
+    The reactant supports intersect in one 5-atom's point set. Splicing out
+    those two 5-atoms creates five cross-bonds and a five-bond dimer. The
+    returned fragments describe the geometry, not a required open intermediate.
+    """
+    small = model.rotate(model.binary_molecule(3, 5), Fraction(6, 105))
+    large = model.weight_configuration((3, 5, 7), (1, 0, 6))
+    roots = next(
+        (i, j)
+        for i, atom in enumerate(small)
+        for j, other in enumerate(large)
+        if atom[0] == other[0] == 5 and set(core.sites(atom)) == set(core.sites(other))
+    )
+    fragments = (
+        tuple(atom for i, atom in enumerate(small) if i != roots[0]),
+        tuple(atom for i, atom in enumerate(large) if i != roots[1]),
+    )
+    return {
+        "reactants": (small, large),
+        "roots": roots,
+        "fragments": fragments,
+        "products": (
+            model.join(fragments, (Fraction(0), Fraction(0))),
+            model.join(
+                ((small[roots[0]],), (large[roots[1]],)), (Fraction(0), Fraction(0))
+            ),
+        ),
+    }
+
+
 def main():
     witnesses = catalog()
     for atoms in witnesses.values():
@@ -74,6 +125,8 @@ def main():
             for a, b in ((1, 1), (1, 2), (2, 2))
         },
         "maximum_outgoing": outgoing,
+        "maximum_as_product": maximum_products(witnesses),
+        "maximum_exchange": maximum_exchange(),
         "species": [
             {"formula": formula, "atoms": atoms} for formula, atoms in witnesses.items()
         ],
@@ -87,6 +140,17 @@ def main():
     print("Species formulas:", len(witnesses))
     print("Channels:", summary["channel_counts"])
     print("Outgoing channels from one or two maxima:", outgoing)
+    print("Channels producing Tmax:", len(summary["maximum_as_product"]))
+    for left, right in summary["maximum_as_product"]:
+        print(
+            left,
+            "->",
+            right,
+            "sizes",
+            tuple(map(sum, left)),
+            "->",
+            tuple(map(sum, right)),
+        )
     print(
         "Example 1->2:", next(((l, r) for l, r in channels if len(l) != len(r)), None)
     )
