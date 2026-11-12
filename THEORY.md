@@ -12,7 +12,21 @@ Set $L$ to the product of the distinct prime elements. Rotate a molecule so that
 
 For distinct primes $p$ and $q$, the only molecule with element set $\{p, q\}$ has $q$ p-atoms and $p$ q-atoms, with bond graph $K_{q,p}$. A p-atom meets $p$ different q-atoms, since atoms of different prime elements meet in at most one point. Each of those q-atoms meets $q$ p-atoms, forcing the entire product grid and the complete bipartite graph. Identical atoms cannot join this molecule.
 
-An in/out assignment exists exactly when the bond graph is bipartite. This does not imply that the graph is planar or has a physical circle-contact realisation. For example, the 23-atom construction for $\{2, 3, 5\}$ below has graph $K_{5,3}$ with every edge subdivided. It is bipartite but non-planar. Whether every prime-element molecule is bipartite remains open here.
+An in/out assignment exists exactly when the bond graph is bipartite. This does not imply that the graph is planar or has a physical circle-contact realisation. For example, the 23-atom construction for $\{2, 3, 5\}$ below has graph $K_{5,3}$ with every edge subdivided. It is bipartite but non-planar. Every molecule with at most three distinct prime elements is bipartite, by the parity parameterization in [CHEMISTRY.md](CHEMISTRY.md#parity-parameterization). The question for four or more distinct primes remains open here.
+
+## Reactions and the three-prime parity parameterization
+
+[CHEMISTRY.md](CHEMISTRY.md) introduces open configurations and atom-conserving
+cut/join reactions, with exact scripts and graph plots in [chemistry/](chemistry/).
+For three primes, every closed grid configuration with no repeated coordinate
+line is described by three coordinate bit lists: a line is present exactly
+when its two fixed coordinate bits differ. Every molecule using all three
+elements has no repeated line. This parameterization proves bipartiteness and
+gives nonnegative rational binary-molecule coefficients whose denominators divide
+the product of the three primes. Consequently every three-prime molecule has
+a pure binary recipe for some batch of at most that product, under the
+discrete reaction rules allowing complete dissociation. These new proofs and
+finite checks are documented there and are not yet formalized in Lean.
 
 ## Maximum size for three primes
 

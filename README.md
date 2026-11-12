@@ -18,6 +18,13 @@ this includes definition of unambiguous text formats for representing molecules
 
 proven mathematical results, existence results, bounds, and conjectures for results
 
+## [CHEMISTRY.md](CHEMISTRY.md) and [chemistry/](chemistry/)
+
+open configurations, cutting and joining molecules, exact binary reaction
+recipes, a three-prime parity classification, and graph plots of reactions.
+Run `python -m chemistry.examples` to regenerate the artifacts and
+`python -m chemistry.verify` to check the results.
+
 ## [zoo/](zoo/)
 
 examples of various structures in exact 0A and 0B notation
