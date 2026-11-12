@@ -24,34 +24,11 @@ A graph colouring with opposite colours at every bond is called an **in/out assi
 
 ## Chemistry
 
-To study reactions, an **open configuration** allows occupied points to belong
-to either one or two atoms. A point on just one atom is an **open site**. A
-**closed configuration** has every occupied point paired; its connected
-components are molecules. A **fragment** is a group of intact atoms kept
-together during a reaction, possibly with open sites.
+In an *open configuration*, occupied points belong to either one or two atoms. A point on just one atom is an *open site*. A *closed configuration* has every occupied point paired; its connected components are molecules. A *fragment* is a group of intact atoms kept together during a reaction, possibly with open sites.
 
-Our initial reaction rules allow cutting a configuration into separately
-rotatable fragments, then joining fragments when their open sites coincide.
-Atoms remain intact and the count of every element is conserved. A join must
-respect the cyclic geometry and may not produce occupancy above two. These
-are discrete operations; energies and continuous motion are additional
-questions.
+We can cut a configuration into separately rotatable fragments and join fragments when their open sites coincide, provided total occupancy never exceeds two. Atoms remain intact, so element counts are conserved. [CHEMISTRY.md](CHEMISTRY.md) covers these reaction rules, proves that every three-prime molecule can be assembled from two-element molecules in some finite batch, and works out the minimum 140-cut split of three `3_35 5_14 7_5` molecules into fourteen `3_5 5_3` and five `3_7 7_3` molecules.
 
-[CHEMISTRY.md](CHEMISTRY.md) develops these rules, gives exact reactions and
-graph plots, and proves that every three-prime molecule can be assembled from
-two-element molecules in some finite batch. For the 54-atom maximum
-`3_35 5_14 7_5`, the smallest pure binary batch is three copies, equivalent to
-fourteen `3_5 5_3` molecules and five `3_7 7_3` molecules. Dimer byproducts
-allow single-product reactions as well.
-
-That three-copy reaction can keep 175 of its 315 original bonds intact. It
-requires exactly 140 bond breaks, the proven minimum; every 3-atom stays in
-a bonded fragment. The chemistry notes include the intermediate graphs and
-curved in/out pictures of the reagents, fragments and products.
-
-The basic atom, configuration and molecule definitions are formalized in Lean
-4 in [`lean/CyclicAtoms/Defs.lean`](lean/CyclicAtoms/Defs.lean) (see
-[`lean/README.md`](lean/README.md)). The reaction rules are not yet formalized.
+The atom, configuration, and molecule definitions are formalized in Lean 4 in [`lean/CyclicAtoms/Defs.lean`](lean/CyclicAtoms/Defs.lean) (see [`lean/README.md`](lean/README.md)).
 
 ## Basic examples
 
