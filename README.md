@@ -24,6 +24,9 @@ open configurations, cutting and joining molecules, exact binary reaction
 recipes, a three-prime parity classification, and graph plots of reactions.
 Run `python -m chemistry.examples` to regenerate the artifacts and
 `python -m chemistry.verify` to check the results.
+Run `python -m chemistry.minimum_split` for the proven 140-cut splitting of
+three maximum 3–5–7 molecules, including intermediate graphs and curved
+in/out pictures.
 
 ## [zoo/](zoo/)
 

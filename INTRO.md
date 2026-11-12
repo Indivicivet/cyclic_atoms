@@ -44,6 +44,11 @@ two-element molecules in some finite batch. For the 54-atom maximum
 fourteen `3_5 5_3` molecules and five `3_7 7_3` molecules. Dimer byproducts
 allow single-product reactions as well.
 
+That three-copy reaction can keep 175 of its 315 original bonds intact. It
+requires exactly 140 bond breaks, the proven minimum; every 3-atom stays in
+a bonded fragment. The chemistry notes include the intermediate graphs and
+curved in/out pictures of the reagents, fragments and products.
+
 The basic atom, configuration and molecule definitions are formalized in Lean
 4 in [`lean/CyclicAtoms/Defs.lean`](lean/CyclicAtoms/Defs.lean) (see
 [`lean/README.md`](lean/README.md)). The reaction rules are not yet formalized.

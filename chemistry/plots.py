@@ -38,7 +38,13 @@ def draw_graph(
             )
     else:
         nx.draw_networkx_edges(
-            graph, positions, ax=ax, edge_color=INK, alpha=alpha, width=0.8
+            graph,
+            positions,
+            ax=ax,
+            edge_color=INK,
+            alpha=alpha,
+            width=0.8,
+            node_size=size,
         )
     for p in sorted(model.formula(atoms)):
         nx.draw_networkx_nodes(

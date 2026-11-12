@@ -169,7 +169,8 @@ $$
 
 The intermediate drawn is complete dissociation. It contains 105 3-atoms, 42
 5-atoms and 15 7-atoms, with 630 open sites. This supplies an existence proof;
-finding a mechanism that keeps larger fragments intact is a separate problem.
+the [minimum-cut mechanism below](#splitting-three-maxima-with-the-fewest-cuts)
+keeps 175 of the original bonds intact instead.
 
 Using only M35 and M57 would require
 
@@ -185,6 +186,123 @@ T_{\max}+7D5\;\rightleftharpoons\;7M35+M57.
 $$
 
 The dimers are consumed in this direction; they are reagents, not catalysts.
+
+## Splitting three maxima with the fewest cuts
+
+The reaction `3 Tmax → 14 M35 + 5 M37` needs exactly **140 bond breaks** under
+our discrete cut/join rules. This counts total breaking events, including any
+repeated breaking of the same bond. Complete atomization would break all 315
+initial bonds. The following construction preserves 175 throughout, and every
+3-atom stays attached to at least one partner.
+
+![Reagents and outputs in the curved in/out style](chemistry/output/minimum_split_human.png)
+
+### Cut two copies one way, and the third the other way
+
+Call the three starting molecules A, B and C.
+
+1. From C, remove its fourteen 5-atoms, breaking `14 × 5 = 70` bonds. This
+   leaves five fragments F37, each consisting of seven 3-atoms bonded to one
+   7-atom. Each fragment is an 8-vertex star with seven surviving bonds and
+   fourteen open sites. The fourteen removed 5-atoms remain intact and free.
+2. From each of A and B, remove its five 7-atoms, breaking `5 × 7 = 35` bonds
+   per copy. Each copy leaves seven fragments F35, each consisting of five
+   3-atoms bonded to two 5-atoms. Each fragment has graph K(5,2), seven atoms,
+   ten surviving bonds and five open sites. The ten removed 7-atoms are free.
+3. Give each of the fourteen F35 fragments one of C's free 5-atoms. This
+   closes its five open sites and makes M35.
+4. Give each of the five F37 fragments two free 7-atoms from A and B. This
+   closes its fourteen open sites and makes M37.
+
+![Which bonds are cut and which fragments survive](chemistry/output/minimum_split_cuts.png)
+
+At the fully cut intermediate, the inventory is
+
+$$
+14F35+5F37+14A_5+10A_7,
+\qquad F35=3_5\,5_2,\quad F37=3_7\,7_1.
+$$
+
+Here `A5` and `A7` mean free individual atoms, not dimers. Of the 162 atoms,
+138 remain in bonded fragments and 24 are isolated partners awaiting transfer.
+The surviving bond count is `14 × 10 + 5 × 7 = 175`.
+
+![The two fragment completion steps](chemistry/output/minimum_split_completion.png)
+
+The green edges are the new bonds: five per M35 and fourteen per M37, giving
+`14 × 5 + 5 × 14 = 140` new bonds. The detailed graphs use local atom indices
+within one representative product; the saved path preserves global atom IDs
+0 through 161.
+
+### The joins respect the circle geometry
+
+In the maximum's CRT coordinates, the 7-atoms occupy x=0 and the 5-atoms
+occupy x=1,2. Each F35 keeps the five 3-atoms and two 5-atoms at one fixed
+z-coordinate. Its missing points are precisely the five points of the
+5-line at x=0 in that slice. Rotate one free 5-atom to that line.
+
+Each F37 keeps seven 3-atoms and one 7-atom at one fixed y-coordinate. Its
+missing points are precisely the two 7-lines at x=1 and x=2. Rotate the two
+free 7-atoms to those lines. Nothing in an existing fragment has to move
+relative to anything else in that fragment. Each inserted atom fills only
+open sites, so no site gets occupancy above two.
+
+![The open fragments in the curved style](chemistry/output/minimum_split_fragments_human.png)
+
+These pictures follow the inward/outward curve style of
+`humanity/visualiser.py`, with exact contact angles taken from the rational
+atom data. The radial separation is a drawing convention. White dots mark
+bonds on the dotted circle; hollow red dots mark open sites. Other crossings
+of the interpolating curves have no bonding meaning.
+
+### Why fewer than 140 cuts is impossible
+
+Initially every 3-atom has two 5-neighbours and one 7-neighbour. The fourteen
+M35 products contain 70 3-atoms, each of which must lose its original bond to
+a 7-atom. The five M37 products contain the other 35 3-atoms, each of which
+must lose both original bonds to 5-atoms. These are distinct bonds, because
+each original bond has exactly one 3-atom endpoint. Thus every mechanism has
+at least
+
+$$
+70\cdot1+35\cdot2=140
+$$
+
+original bonds that must break. Temporary intermediates cannot remove that
+requirement. The construction above breaks exactly those 140 bonds once each
+and breaks no newly formed bonds, so it attains the global minimum for this
+reaction under our rules.
+
+### Exact stages and reproduction
+
+| Stage | Bonds present | Open sites | Connected components |
+|---|---:|---:|---:|
+| Three starting molecules | 315 | 0 | 3 |
+| Strip C's 5-atoms | 245 | 140 | 21 |
+| Strip A and B's 7-atoms | 175 | 280 | 43 |
+| Complete fourteen M35 | 245 | 140 | 29 |
+| Complete five M37 | 315 | 0 | 19 |
+
+![Every atom at five stages](chemistry/output/minimum_split_stages.png)
+
+The graph layout changes between stages to separate the components visually.
+The exact rational phases and global identities are in
+[minimum_split_path.json](chemistry/output/minimum_split_path.json).
+Its 67 rigid fragment/atom rotations realize the four operations above.
+Every move is checked for occupancy, conservation and preservation of the 175
+retained bonds; every final component is checked as a molecule. This schedule
+cuts before completing the fragments; minimizing the peak number of open
+sites is a different objective from minimizing total bond breaks.
+
+```sh
+python -m chemistry.minimum_split
+python -m chemistry.verify
+```
+
+The first command writes the exact path and five figures, each in PNG and
+SVG. The implementation is in [minimum_split.py](chemistry/minimum_split.py)
+and [split_plots.py](chemistry/split_plots.py). The continuous-motion
+qualification in the reaction rules still applies.
 
 ## Why every three-prime molecule has a binary batch recipe
 
@@ -385,7 +503,7 @@ The Python entry points are `inspect_open`, `fragment`, `rotate`, `join`,
 Reaction paths use unsigned atoms; an in/out assignment is a property of a
 particular bond graph, rather than an extra conserved element.
 
-The next useful problems are the minimum number of cuts for a given reaction,
-reachability while retaining specified fragments, and which joins are allowed
-by a chosen continuous dynamics. An energy model would also let us distinguish
-possible reactions from preferred reactions.
+The next useful problems include minimum cuts for other reactions, minimizing
+the peak number of open sites, retaining specified fragments, and which joins
+are allowed by a chosen continuous dynamics. An energy model would also let
+us distinguish possible reactions from preferred reactions.

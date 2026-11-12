@@ -9,12 +9,76 @@ import networkx as nx
 import numpy as np
 
 import chemistry.examples as examples
+import chemistry.minimum_split as splitting
 import chemistry.model as model
 import chemistry.plots as plots
 import visualization.core as core
 
 
 class ChemistryChecks(unittest.TestCase):
+    def test_minimum_cut_split_every_move(self):
+        reaction = splitting.minimum_split()
+        state = reaction["stages"][0]["atoms"]
+        original = set(model.inspect_open(state)[1].edges())
+        retained = set(model.inspect_open(reaction["stages"][2]["atoms"])[1].edges())
+        self.assertEqual(len(retained), 175)
+        self.assertTrue(retained <= original)
+        cuts = 0
+        joins = 0
+        for i, operation in enumerate(reaction["moves"], 1):
+            before = set(model.inspect_open(state)[1].edges())
+            state = splitting.move_atoms(
+                state, operation["indices"], operation["turns"]
+            )
+            _, graph = model.inspect_open(state)
+            after = set(graph.edges())
+            cuts += len(before - after)
+            joins += len(after - before)
+            self.assertTrue(retained <= after)
+            self.assertTrue(
+                all(
+                    graph.degree(node) >= 1
+                    for node, atom in enumerate(state)
+                    if atom[0] == 3
+                )
+            )
+            for stage in reaction["stages"]:
+                if stage["after_move"] == i:
+                    self.assertEqual(state, stage["atoms"])
+        self.assertEqual(cuts, reaction["minimum_cuts"])
+        self.assertEqual((cuts, joins, len(reaction["moves"])), (140, 140, 67))
+        for stage, bonds, sites, components in zip(
+            reaction["stages"],
+            (315, 245, 175, 245, 315),
+            (0, 140, 280, 140, 0),
+            (3, 21, 43, 29, 19),
+        ):
+            occupancy, graph = model.inspect_open(stage["atoms"])
+            self.assertEqual(model.formula(stage["atoms"]), {3: 105, 5: 42, 7: 15})
+            self.assertEqual(graph.number_of_edges(), bonds)
+            self.assertEqual(
+                sum(len(owners) == 1 for owners in occupancy.values()), sites
+            )
+            self.assertEqual(nx.number_connected_components(graph), components)
+        final = reaction["stages"][-1]["atoms"]
+        for i, group in enumerate(reaction["product_groups"]):
+            product_atoms = tuple(final[node] for node in group)
+            core.analyze(product_atoms)
+            self.assertEqual(
+                model.formula(product_atoms), {3: 5, 5: 3} if i < 14 else {3: 7, 7: 3}
+            )
+        original_graph = model.inspect_open(reaction["stages"][0]["atoms"])[1]
+        self.assertTrue(
+            all(
+                sorted(
+                    reaction["stages"][0]["atoms"][j][0] for j in original_graph[node]
+                )
+                == [5, 5, 7]
+                for node, atom in enumerate(final)
+                if atom[0] == 3
+            )
+        )
+
     def test_other_shared_elements(self):
         for s, p, q in ((5, 3, 7), (7, 3, 5), (2, 3, 5)):
             with self.subTest(shared=s):
