@@ -44,3 +44,27 @@ propext, Classical.choice, Lean.ofReduceBool, Quot.sound
 ```
 
 `Lean.ofReduceBool` comes from `native_decide` on the finite CRT, counting, witness, and certificate checks; there are no custom axioms or `sorry`s, and the Python generator (`python -m chemistry.universal_synthesis`) is not trusted by the proof.
+
+## Generalized formula synthesis
+
+[`UniversalSynthesis.lean`](CyclicAtoms/UniversalSynthesis.lean) adds a separate
+parameterized theorem, `CyclicAtoms.UniversalSynthesis.universal_synthesis`.
+For `p,q ≥ 3`, `r ≥ 2`, and any of the three binary feed pairs, it produces
+finite initial and final stocks and an ordered `Chain` of balanced `2→2`
+steps containing a requested `Valid p q r` formula. `Valid` explicitly lists
+the three dimers, the three binaries, and all bounded parity profiles with
+three positive counts. It is a formula predicate, not `IsMolecule`.
+
+The proof uses affine midpoint reactions, a boundary-to-interior reaction,
+coordinate permutations, and induction on finite production trees.
+`Reachable.batch` prepares the two inputs on independent fresh feed supplies
+before reacting them, preserving all byproducts and input multiplicities.
+`Chain.conserves` and `Chain.card_eq` verify element conservation and the
+constant number of molecules.
+
+The guarded axiom list is `propext, Classical.choice, Quot.sound`; this module
+uses neither `native_decide` nor unproved axioms. It does **not** generalize
+the circle-to-parity classification or catalog realization from the original
+`Config` / `IsMolecule` definitions. Those arbitrary-prime geometric arguments
+are given in [UNIVERSAL_SYNTHESIS.md](../UNIVERSAL_SYNTHESIS.md), while the
+existing Lean end-to-end bridge continues to cover `{3,5,7}` only.

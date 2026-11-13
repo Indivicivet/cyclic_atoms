@@ -22,3 +22,19 @@ The main theorem is `Geometry.every_molecule_with_elements357` in [`CyclicAtoms/
 - [`CyclicAtoms/GridWitness.lean`](CyclicAtoms/GridWitness.lean), [`GeometryWitness357.lean`](CyclicAtoms/GeometryWitness357.lean), [`GeometryWitnessData.lean`](CyclicAtoms/GeometryWitnessData.lean): Spanning-tree certificates proving `IsMolecule` for all 86 catalog witnesses and lifting formula plans to `MolecularChain`.
 
 See [`UNIVERSAL_SYNTHESIS.md`](../UNIVERSAL_SYNTHESIS.md) for the mathematical overview.
+
+## Universal synthesis for arbitrary prime triples
+
+[`CyclicAtoms/UniversalSynthesis.lean`](CyclicAtoms/UniversalSynthesis.lean)
+proves `UniversalSynthesis.universal_synthesis`: for all integer dimensions
+`p,q ≥ 3`, `r ≥ 2`, every formula in the generalized parity catalog is
+reachable from any two binary feeds by a finite sequential batch of balanced
+`2→2` replacements, retaining byproducts. Any triple of distinct primes can
+be relabeled to satisfy these bounds, including triples containing 2.
+
+This symbolic proof uses no catalog enumeration, `native_decide`, custom
+axioms, or `sorry`. `Chain.conserves` proves conservation of each element;
+`Chain.card_eq` proves conservation of the number of molecules. Its scope
+is the parity formula catalog. The arbitrary-prime geometric classification
+and realization are proved in the mathematical overview, but their Lean
+bridge to the original `IsMolecule` definition remains specific to 3–5–7.
