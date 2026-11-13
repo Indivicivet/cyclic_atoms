@@ -214,9 +214,9 @@ def main():
                 "type_batch": audit(steps, feeds),
             }
         )
-    (Path(__file__).parent / "output" / "synthesis.json").write_text(
-        json.dumps(results, indent=2) + "\n", encoding="utf-8"
-    )
+    output = Path(__file__).parent / "output" / "synthesis.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
