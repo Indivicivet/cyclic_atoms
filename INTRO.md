@@ -35,8 +35,9 @@ If every intermediate must consist entirely of molecules, the three-copy split c
 With molecular byproducts allowed, any two of M35, M37 and M57 suffice to
 synthesize any 3-5-7 molecule, using only 2→2 closed-endpoint reactions.
 [UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md) gives the proof, explicit finite
-recipes for every target, and Lean certificates for the finite parity-formula
-model. The original circle-to-CRT reduction remains a paper proof.
+recipes for every target, and an end-to-end Lean proof starting from the
+original `IsMolecule` definition. [The proof audit](lean/PROOF_AUDIT.md) gives
+the exact theorem statement and the meaning of its reaction rules.
 
 ## Basic examples
 

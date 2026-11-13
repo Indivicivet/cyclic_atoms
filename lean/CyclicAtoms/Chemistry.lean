@@ -102,7 +102,7 @@ def execute (catalog : List Formula) (reactions : List Reaction) :
     List Nat → List Formula → Option (List Formula)
   | [], stock => some stock
   | i :: rest, stock =>
-      match reactions.get? i with
+      match reactions[i]? with
       | none => none
       | some r => if validReaction catalog r then
           match consume r.inputs stock with

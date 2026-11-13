@@ -112,13 +112,22 @@ dependency explicitly. The Python search is not trusted by this proof: Lean
 recomputes the validity of the supplied data. The general Boolean
 factorization uses ordinary kernel-checked proofs and no axioms.
 
-There is a formalization boundary. The original rational-circle `IsMolecule`
-definition has not yet been connected to the CRT/parity count formulas in
-Lean. The mathematical reduction above supplies that step on paper. Thus the
-Lean result is the finite parity-formula synthesis theorem, together with the
-general Boolean factorization, rather than an end-to-end theorem quantified
-over the original `IsMolecule`. This is also the existing CRT gap documented
-in [lean/README.md](lean/README.md).
+The circle-to-CRT and counting steps are now formalized too. The main theorem,
+`Geometry.every_molecule_with_exact_elements357` in
+[GeometricSynthesis.lean](lean/CyclicAtoms/GeometricSynthesis.lean), assumes the
+original `IsMolecule C` and exactly the element set `{3,5,7}`. It gives finite
+initial and final stocks of original molecules, with only the chosen binary
+feed formulas initially, a chain of 2→2 molecular reactions, and the exact
+configuration `C` among the final products. It permits any requested geometric
+isomer: the formula recipe is lifted with that configuration as its realization.
+
+All intermediate species are proved to satisfy the original infinite-point
+`IsMolecule` predicate. In particular, the catalog's Boolean graph check is
+not assumed sound: separate checked parent/rank certificates give actual
+connectedness, and finite occupancy is proved equivalent to exact pairing at
+arbitrary original phases. `MolecularChain.conserves` proves conservation of
+every element. [The proof audit](lean/PROOF_AUDIT.md) maps these steps to their
+Lean statements and lists the final theorem's complete axiom dependencies.
 
 ## Why the byproduct condition matters
 
