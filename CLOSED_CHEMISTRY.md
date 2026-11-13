@@ -1,26 +1,20 @@
 # Small closed reactions
 
-For minimum-length routes from binary feedstocks, see [SYNTHESIS.md](SYNTHESIS.md). The event minima for supplies (M35,M37), (M35,M57), (M37,M57), and all three are 11, 7, 16, and 7. The corresponding minimum numbers of distinct reaction types are 7, 4, 7, and 4, with molecular byproducts allowed.
+For minimum-length routes from binary feedstocks, see [SYNTHESIS.md](SYNTHESIS.md). Event minima for supplies `(M35,M37)`, `(M35,M57)`, `(M37,M57)`, and all three are 11, 7, 16, and 7; minimum distinct reaction types are 7, 4, 7, and 4 (with molecular byproducts allowed).
 
-A maximum 3-5-7 molecule can be an output of a nontrivial 2→2 reaction; the catalog has 29 such formula channels. The smallest is `M35 + T(30,13,5) → Tmax + D5`, with sizes `8 + 48 → 54 + 2`.
+A maximum 3-5-7 molecule can still be produced by a nontrivial `2→2` step: 29 catalog channels yield `Tmax`, starting at `M35 + T(30,13,5) → Tmax + D5` (sizes `8 + 48 → 54 + 2`). The obstruction proved below only rules out starting from maxima alone.
 
-The separate obstruction proved below concerns starting with only maxima. It does not exclude forming a maximum from other molecules, or reacting a maximum with a different partner.
+## Closed-state model
 
-## What "no free atoms" requires
+Under separate cut and join operations, keeping every intermediate state closed forbids all chemistry: cutting a connected molecule opens sites, superposing closed molecules exceeds occupancy two, and rotating whole molecules leaves them unchanged.
 
-An open bonded fragment is not a free atom, but it is not a molecule either. Allowing bonded open fragments while forbidding isolated atoms is weaker than requiring every intermediate state to consist entirely of molecules. The 140-cut construction violates both restrictions at some intermediate states.
-
-With our original separate cut and join operations, requiring every state to be closed prevents nontrivial chemistry. Cutting a connected molecule exposes sites. Superposing closed molecules cannot form new bonds without occupancy exceeding two. Rotating whole molecules preserves their structures.
-
-An instantaneous 1→2, 2→1 or 2→2 event therefore needs a concerted operation in which old bonds break and new ones form in a single step, leaving closed configurations before and after.
-
-Here we use the permissive endpoint model: any two collections of molecules with the same element counts form a candidate channel. Adding constraints on continuous motion or retained fragments could rule out some of these channels, though the impossibility result for maxima holds regardless since even this permissive model is blocked.
+We therefore allow concerted `1→2`, `2→1`, and `2→2` steps whose inputs and outputs are closed molecules with matching element counts. Because this endpoint model imposes no continuous motion or low-cut constraints, the impossibility result for maxima also holds under any stricter dynamics.
 
 ## The small reaction candidates
 
-Write `T(a,b,c)` for formula `3_a 5_b 7_c`. The arguments are atom counts, not coordinate-bit weights. Write `M35 = T(5,3,0)`, `M37 = T(7,0,3)`, and `Dp` for a p-dimer.
+Write `T(a,b,c)` for `3_a 5_b 7_c` (atom counts, not coordinate-bit weights), `M35 = T(5,3,0)`, `M37 = T(7,0,3)`, and `Dp` for a `p`-dimer.
 
-Among molecules with elements contained in {3,5,7}, there are exactly two distinct 1↔2 formula equations:
+Among molecules with elements in `{3,5,7}`, there are exactly two `1↔2` formula equations (their reverses give the `2→1` cases), each with a checked geometric witness:
 
 $$
 T(18,12,6)\ \rightleftharpoons\ M35+T(13,9,6),
@@ -30,21 +24,17 @@ $$
 T(22,12,6)\ \rightleftharpoons\ M35+T(17,9,6).
 $$
 
-Their reverses give the 2→1 cases. Every molecule in these equations has an exact checked geometric witness.
-
-There are 1,657 nontrivial unordered 2↔2 formula equations. One is the earlier fusion reaction considered as a concerted event:
+There are 1,657 nontrivial unordered `2↔2` equations, including the concerted version of the six-cut fusion reaction where the extracted 3-atoms leave directly as a dimer:
 
 $$
 M35+M37\ \rightleftharpoons\ T(10,3,3)+D3.
 $$
 
-Here the extracted 3-atoms leave as a bonded dimer in one step rather than passing through free atoms.
-
-The complete catalog has 86 molecular formulas: 80 using all three elements, three binary formulas and three dimer formulas. Completeness follows from the parity classification in [CHEMISTRY.md](CHEMISTRY.md), and connectivity and double occupancy are checked for every witness. We match singleton and pair inventories with equal element counts, excluding trivial identities and without distinguishing geometric isomers.
+The catalog has 86 formulas (80 ternary, 3 binary, 3 dimer), complete by the parity classification in [CHEMISTRY.md](CHEMISTRY.md). Matching singleton and unordered pair inventories by element count—excluding trivial identities and without distinguishing geometric isomers—yields these channels.
 
 ## Two molecules producing a maximum
 
-Here are four of the 29 nontrivial formula channels. The notation is `T(a,b,c) = 3_a 5_b 7_c`.
+Four of the 29 `2→2` channels that output `Tmax`:
 
 | Reactants | Products | Atom counts |
 |---|---|---|
@@ -53,21 +43,17 @@ Here are four of the 29 nontrivial formula channels. The notation is `T(a,b,c) =
 | `2 T(20,11,5)` | `Tmax + T(5,8,5)` | `36 + 36 → 54 + 18` |
 | `2 T(25,12,5)` | `Tmax + T(15,10,5)` | `42 + 42 → 54 + 30` |
 
-The first has the smallest possible total input size (56), since the second output must contain at least two atoms. It is the only formula channel producing a maximum plus a dimer. All 29 channels and exact witnesses are saved under `maximum_as_product` in the JSON output.
+The first has the minimum total input size (56, since the second product must have at least two atoms) and is the only channel yielding `Tmax` plus a dimer.
 
-The first also has an exact ten-bond exchange construction. In CRT coordinates, `T(30,13,5)` has six full z-slices and one exceptional 5-atom in the remaining slice. Place M35 in that remaining slice. The supports intersect precisely in that exceptional 5-atom's five points, which also form one of M35's 5-atoms.
-
-Splice out those two 5-atoms. Their ten old bonds are replaced by five cross-bonds between the remaining fragments and five parallel bonds between the extracted atoms. The products are exactly the maximum and D5. The maximum retains 100 original bonds across the two reactants, and in a concerted step the extracted atoms form their dimer directly without an exposed-atom intermediate.
-
-`maximum_exchange()` in the enumeration script constructs and verifies the exact endpoint geometry. The other 28 entries are checked endpoint channels without constructed low-cut mechanisms.
+It also has a 10-bond exchange construction. In CRT coordinates, `T(30,13,5)` has six full `z`-slices and one exceptional 5-atom in the seventh. Placing `M35` in that slice aligns one of its 5-atoms with the exceptional 5-atom. Splicing out both 5-atoms replaces their ten bonds with five cross-bonds and five dimer bonds, giving `Tmax` (retaining 100 original bonds) and `D5`. `maximum_exchange()` constructs this witness; the other 28 entries in `maximum_as_product` are balanced endpoint channels.
 
 ## Why a collection of only maxima cannot start changing
 
-Let `Tmax = T(35,14,5)`, with 54 atoms, the maximum molecular size for these elements.
+Let `Tmax = T(35,14,5)` (54 atoms, the maximum molecular size for `{3,5,7}`).
 
-Two maxima contain 108 atoms. One output molecule has at most 54 atoms, ruling out 2→1. With two output molecules, each must have 54 atoms. The only molecular formula of size 54 in the complete catalog is `(35,14,5)`. Thus a 2→2 event only produces two maxima again. Geometric isomerization leaves this formula-level obstruction intact.
+Two maxima have 108 atoms. Since one molecule has at most 54 atoms, `2→1` is impossible, and `2→2` forces two 54-atom products. The only 54-atom formula in the catalog is `T(35,14,5)`, so `2→2` only returns two maxima.
 
-A single maximum cannot split into two molecules either. This follows from the parity count identities, which give all possibilities having at most five 7-atoms:
+A single maximum cannot split (`1→2`) either. Complementing coordinate bits so `a in {0,1}` gives `n7 = 3b` (`a=0`) or `n7 = 5+b` (`a=1`), which yields all catalog formulas with at most five 7-atoms:
 
 | Number of 7-atoms | Possible molecular formulas |
 |---:|---|
@@ -76,21 +62,19 @@ A single maximum cannot split into two molecules either. This follows from the p
 | 3 | `T(7+3c,3c,3)`, integer `0 ≤ c ≤ 7` |
 | 5 | `T(5c,7+c,5)`, integer `0 ≤ c ≤ 7` |
 
-There are no possibilities with one or four 7-atoms. To derive the table, complement the coordinate bits so the 3-coordinate weight a is 0 or 1. Then `n7 = 3b` if a=0 and `n7 = 5+b` if a=1. Substitution into the other count identities gives the displayed families. The zero-7 cases are the elementary one- and two-element molecules.
+Splitting five 7-atoms into two products requires `5+0` or `3+2`:
 
-Two products containing five 7-atoms must distribute them as 5+0 or 3+2:
+- `5+0`: subtracting `D3`, `D5`, or `M35` from `Tmax` leaves `(33,14,5)`, `(35,12,5)`, or `(30,11,5)`, none of the form `(5c,7+c,5)`.
+- `3+2`: the second product must be `D7`, leaving `(35,14,3)`, which requires `7+3c = 35` (no integer solution).
 
-- For 5+0, subtract D3, D5 or M35 from Tmax. The remainders are `(33,14,5)`, `(35,12,5)` or `(30,11,5)`. None has the required form `(5c,7+c,5)`.
-- For 3+2, the second molecule must be D7. The other would be `(35,14,3)`. Its first count requires `7+3c=35`, with no integer c.
-
-So 1→2 is impossible. A 1→1 event preserves the maximum formula too. If a state contains only maxima, every small closed step therefore outputs only maxima. Induction rules out reaching binaries:
+Thus `1→1`, `1→2`, and `2→2` steps on maxima only output maxima, so by induction:
 
 $$
 3T_{\max}\ \not\longrightarrow\ 14M35+5M37
 \quad\text{by closed steps with at most two inputs and two outputs.}
 $$
 
-This assumes no extra starting reagents, borrowed catalysts, open intermediates, or larger concerted steps.
+This assumes no extra reagents, catalysts, open intermediates, or larger concerted steps.
 
 ## Reproduce
 
@@ -99,4 +83,4 @@ python -m chemistry.closed_reactions
 python -m chemistry.verify
 ```
 
-[closed_reactions.py](chemistry/closed_reactions.py) writes all formulas, exact witnesses and candidate channels to [closed_reactions.json](chemistry/output/closed_reactions.json). Verification checks every witness and balanced equation, the split channels, and the absence of a formula-changing first step from one or two maxima.
+[closed_reactions.py](chemistry/closed_reactions.py) writes all formulas, witnesses, and channels to [closed_reactions.json](chemistry/output/closed_reactions.json).

@@ -1,10 +1,8 @@
 # Shortest syntheses of MAX3,5,7
 
-A = M35 = [5,3,0], B = M37 = [7,0,3], C = M57 = [0,7,5]. Every [a,b,c] denotes the molecule 3_a 5_b 7_c. Dp is a bonded p-dimer. MAX = [35,14,5].
+`A = M35 = [5,3,0]`, `B = M37 = [7,0,3]`, `C = M57 = [0,7,5]`, `Dp = p_2`, and `MAX = [35,14,5]`, where `[a,b,c]` denotes `3_a 5_b 7_c`.
 
-The listed feedstocks are unlimited, with no other molecules initially available. The goal is at least one MAX, allowing arbitrary closed byproducts. We use the balanced closed-endpoint model from [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md); all witness routes below use only 2→2 steps.
-
-A type specifies the actual molecular formulas, with a reversible equation counted once. Changing an intermediate's formula changes the type, even when the same growth pattern is used. Each occurrence of a reaction, including two occurrences run in parallel, counts as a separate event.
+From unlimited feedstocks of the listed supplies (with closed byproducts allowed), we minimize total reaction events and distinct reaction types (counting reversible equations once, and parallel firings as separate events) under the `1→2`, `2→1`, and `2→2` model from [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md). All witness routes use only `2→2` steps.
 
 | Supply | Minimum events | Minimum types | Events in the type-minimal example |
 |---|---:|---:|---:|
@@ -15,7 +13,7 @@ A type specifies the actual molecular formulas, with a reversible equation count
 
 ## Graphs and curved pictures of the A,C routes
 
-Let `Xk = [5k,7+k,5]`, so X0 is M57 and X7 is MAX. Each seven-event arrow adds one M35 and releases one D5. Read its top row left to right, then its bottom row right to left. The graph drawings keep the seven CRT slices in fixed rows: each step replaces one of the upper 5-atoms with a new row containing five 3-atoms and two 5-atoms.
+Let `Xk = [5k,7+k,5]` (`X0 = M57`, `X7 = MAX`). Each step in the 7-event ladder adds `M35` and releases `D5`, replacing an upper 5-atom with a new row of five 3-atoms and two 5-atoms (read top row left-to-right, bottom row right-to-left).
 
 | Route | Bond graphs | Human-style pictures |
 |---|---|---|
@@ -26,31 +24,25 @@ Let `Xk = [5k,7+k,5]`, so X0 is M57 and X7 is MAX. Each seven-event arrow adds o
 
 ![Seven-event route in the curved style](chemistry/output/synthesis_seven_human.png)
 
-The four-type diagrams show one elementary equation per row, fired 4, 4, 2 and 1 times respectively. Both copies of the reactant appear in the last two rows. This grouped batch starts with 8 M35 and 4 M57, and ends with MAX, X1, eight D5 and two returned M57. It illustrates the four types without optimizing initial feed quantities.
+The four-type diagrams fire each row 4, 4, 2, and 1 times, turning `8 M35 + 4 M57` into `MAX + X1 + 8 D5 + 2 M57`.
 
 ![Four reaction types as bond graphs](chemistry/output/synthesis_four_graphs.png)
 
 ![Four reaction types in the curved style](chemistry/output/synthesis_four_human.png)
 
-Each graph vertex or curved line is one atom, with consistent element colours throughout. In the curved pictures only marked contacts on the dotted circle are bonds; other curve crossings have no bonding meaning.
-
-Run `python -m chemistry.synthesis_plots` to regenerate the four PNG/SVG figures. The exact molecule phases and batch inventory are in [synthesis_picture_data.json](chemistry/output/synthesis_picture_data.json).
+In the curved pictures only marked contacts on the dotted circle are bonds; other crossings are visual only. Regenerate figures with `python -m chemistry.synthesis_plots` (data in [synthesis_picture_data.json](chemistry/output/synthesis_picture_data.json)).
 
 ## Optimality and executable batches
 
-For event count, integer optimization minimizes total firings subject to nonnegative final inventory of every non-feedstock and at least one MAX. Ignoring ordering makes this a lower bound. Each optimal firing multiset was then scheduled and replayed from zero intermediate stock, attaining that lower bound. Thus an unseeded catalytic cycle cannot invalidate the claimed minimum. The model includes both directions of every channel in the complete 86-formula catalog. HiGHS proved optimality with zero relative gap.
+Event minima come from integer optimization (HiGHS, zero relative gap) over both directions of all 86-catalog channels, then scheduling each optimal multiset from zero intermediate stock. Type minima come from breadth-first search over synthesizable species: once a reaction fires, both sides are established and unlimited feedstocks can reproduce any established intermediate.
 
-For type count, exhaustive breadth-first search tracks the set of synthesizable species. A reaction can establish its outputs when all its inputs are established. Unlimited feed allows any established intermediate to be remade in any finite quantity, including two copies of one reactant. Once a type has fired, all species on both sides are established; repeating it cannot add another species. Search depth therefore counts new types exactly. The first depth reaching MAX is the minimum. Recursive expansion and inventory replay give finite batches without borrowed intermediates.
+The objectives are independent (the 7-event `A,C` route uses 7 types; the 4-type witness uses 11 events). No supply can produce `MAX` without byproducts, since reversing such a route would contradict the obstruction in [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md).
 
-The objectives are independent. The last table column describes an explicit type-minimal witness, not the minimum event count among all type-minimal witnesses. In particular, the seven-event A,C ladder uses seven types; the four-type A,C recipe shown here uses eleven events.
-
-None of these feed supplies can produce MAX without byproducts under these small closed steps, since reversing such a route would escape from a collection of only maxima, contradicting the earlier obstruction.
+Tables below list reactions in execution order with firing counts.
 
 ## Supply A, B
 
 ### Event-minimal route
-
-Execute the rows in order, with the indicated number of firings.
 
 | Reaction | Firings |
 |---|---:|
@@ -64,8 +56,6 @@ Execute the rows in order, with the indicated number of firings.
 | `[22,15,3] + [28,7,9] → [15,8,7] + MAX` | 1 |
 
 ### Type-minimal route
-
-Execute the rows in order, with the indicated number of firings.
 
 | Reaction | Firings |
 |---|---:|
@@ -81,8 +71,6 @@ Execute the rows in order, with the indicated number of firings.
 
 ### Event-minimal route
 
-Execute the rows in order, with the indicated number of firings.
-
 | Reaction | Firings |
 |---|---:|
 | `C + A → D5 + [5,8,5]` | 1 |
@@ -95,8 +83,6 @@ Execute the rows in order, with the indicated number of firings.
 
 ### Type-minimal route
 
-Execute the rows in order, with the indicated number of firings.
-
 | Reaction | Firings |
 |---|---:|
 | `C + A → D5 + [5,8,5]` | 4 |
@@ -107,8 +93,6 @@ Execute the rows in order, with the indicated number of firings.
 ## Supply B, C
 
 ### Event-minimal route
-
-Execute the rows in order, with the indicated number of firings.
 
 | Reaction | Firings |
 |---|---:|
@@ -125,8 +109,6 @@ Execute the rows in order, with the indicated number of firings.
 
 ### Type-minimal route
 
-Execute the rows in order, with the indicated number of firings.
-
 | Reaction | Firings |
 |---|---:|
 | `C + B → D7 + [7,7,6]` | 8 |
@@ -139,30 +121,7 @@ Execute the rows in order, with the indicated number of firings.
 
 ## Supply A, B, C
 
-### Event-minimal route
-
-Execute the rows in order, with the indicated number of firings.
-
-| Reaction | Firings |
-|---|---:|
-| `C + A → D5 + [5,8,5]` | 1 |
-| `A + [5,8,5] → D5 + [10,9,5]` | 1 |
-| `A + [10,9,5] → D5 + [15,10,5]` | 1 |
-| `A + [15,10,5] → D5 + [20,11,5]` | 1 |
-| `A + [20,11,5] → D5 + [25,12,5]` | 1 |
-| `A + [25,12,5] → D5 + [30,13,5]` | 1 |
-| `A + [30,13,5] → D5 + MAX` | 1 |
-
-### Type-minimal route
-
-Execute the rows in order, with the indicated number of firings.
-
-| Reaction | Firings |
-|---|---:|
-| `C + A → D5 + [5,8,5]` | 4 |
-| `A + [5,8,5] → D5 + [10,9,5]` | 4 |
-| `[10,9,5] + [10,9,5] → C + [20,11,5]` | 2 |
-| `[20,11,5] + [20,11,5] → [5,8,5] + MAX` | 1 |
+Same optimal routes as Supply `A, C` (7 events; 4 types in 11 events).
 
 ## Reproduce
 
@@ -171,4 +130,4 @@ python -m chemistry.synthesis
 python -m chemistry.verify
 ```
 
-The search and batch expansion are in [synthesis.py](chemistry/synthesis.py). Exact ordered sequences and all intermediate-producing reaction types are saved in [synthesis.json](chemistry/output/synthesis.json).
+The search and batch expansion are in [synthesis.py](chemistry/synthesis.py), writing ordered sequences and reaction types to [synthesis.json](chemistry/output/synthesis.json).
