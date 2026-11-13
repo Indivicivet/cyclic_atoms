@@ -1,9 +1,11 @@
 """Exact checks of the chemistry results. Run: python -m chemistry.verify."""
 
+import json
 import unittest
 from collections import Counter
 from fractions import Fraction
 from itertools import product
+from pathlib import Path
 
 import networkx as nx
 import numpy as np
@@ -13,10 +15,44 @@ import chemistry.examples as examples
 import chemistry.minimum_split as splitting
 import chemistry.model as model
 import chemistry.plots as plots
+import chemistry.synthesis as synthesis
 import visualization.core as core
 
 
 class ChemistryChecks(unittest.TestCase):
+    def test_synthesis_recipes_without_borrowed_molecules(self):
+        results = json.loads(
+            (Path(__file__).parent / "output/synthesis.json").read_text()
+        )
+        self.assertEqual(len(results), 4)
+        channels = closed.reactions(closed.catalog())
+        allowed = set(channels) | {(right, left) for left, right in channels}
+        for result, events, types in zip(results, (11, 7, 16, 7), (7, 4, 7, 4)):
+            feeds = tuple(map(tuple, result["feeds"]))
+            type_plan, _ = synthesis.type_search(closed.catalog(), channels, feeds)
+            self.assertEqual(len(type_plan), types)
+            self.assertEqual(result["events"]["lower_bound"], events)
+            self.assertEqual(result["type_count"], types)
+            for raw, count in (
+                (result["events"]["steps"], events),
+                (result["type_steps"], None),
+            ):
+                steps = [
+                    tuple(tuple(map(tuple, side)) for side in step) for step in raw
+                ]
+                self.assertTrue(all(step in allowed for step in steps))
+                batch = synthesis.audit(steps, feeds)
+                if count is not None:
+                    self.assertEqual(len(steps), count)
+                else:
+                    self.assertEqual(
+                        len({tuple(sorted(step)) for step in steps}), types
+                    )
+                self.assertEqual(
+                    tuple(sum(m[i] * n for m, n in batch["initial"]) for i in range(3)),
+                    tuple(sum(m[i] * n for m, n in batch["final"]) for i in range(3)),
+                )
+
     def test_maximum_as_a_product(self):
         channels = closed.maximum_products(closed.catalog())
         self.assertEqual(len(channels), 29)

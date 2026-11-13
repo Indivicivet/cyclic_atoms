@@ -1,5 +1,7 @@
 # Small closed reactions
 
+For minimum-length routes from binary feedstocks, see [SYNTHESIS.md](SYNTHESIS.md). The event minima for supplies (M35,M37), (M35,M57), (M37,M57), and all three are 11, 7, 16, and 7. The corresponding minimum numbers of distinct reaction types are 7, 4, 7, and 4, with molecular byproducts allowed.
+
 A maximum 3–5–7 molecule can be an output of a nontrivial 2→2 reaction: the complete catalog contains 29 such formula channels. The smallest example is `M35 + T(30,13,5) → Tmax + D5`, with sizes `8 + 48 → 54 + 2`.
 
 The separate obstruction proved below concerns starting with only maxima. It does not exclude forming a maximum from other molecules, or reacting a maximum with a different partner.
