@@ -2,7 +2,7 @@
 
 A = M35 = [5,3,0], B = M37 = [7,0,3], C = M57 = [0,7,5]. Every [a,b,c] denotes the molecule 3_a 5_b 7_c. Dp is a bonded p-dimer. MAX = [35,14,5].
 
-The listed feedstocks are unlimited. No other molecules are initially available. The goal is at least one MAX, with arbitrary closed byproducts allowed. We use the balanced closed-endpoint model in [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md), allowing 1→2, 2→1 and 2→2. All witness routes below actually use only 2→2. No continuous mechanism or low-cut realization is asserted.
+The listed feedstocks are unlimited, with no other molecules initially available. The goal is at least one MAX, allowing arbitrary closed byproducts. We use the balanced closed-endpoint model from [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md); all witness routes below use only 2→2 steps.
 
 A type specifies the actual molecular formulas, with a reversible equation counted once. Changing an intermediate's formula changes the type, even when the same growth pattern is used. Each occurrence of a reaction, including two occurrences run in parallel, counts as a separate event.
 
@@ -32,19 +32,19 @@ The four-type diagrams show one elementary equation per row, fired 4, 4, 2 and 1
 
 ![Four reaction types in the curved style](chemistry/output/synthesis_four_human.png)
 
-Each graph vertex or curved line is one atom; element colours are consistent throughout. In the curved pictures only marked contacts on the dotted circle are bonds. Other curve crossings have no bonding meaning. These are closed endpoint structures, not internal bond-breaking trajectories. All displayed molecules and equations are checked exactly before rendering.
+Each graph vertex or curved line is one atom, with consistent element colours throughout. In the curved pictures only marked contacts on the dotted circle are bonds; other curve crossings have no bonding meaning.
 
 Run `python -m chemistry.synthesis_plots` to regenerate the four PNG/SVG figures. The exact molecule phases and batch inventory are in [synthesis_picture_data.json](chemistry/output/synthesis_picture_data.json).
 
 ## Optimality and executable batches
 
-For event count, integer optimization minimizes total firings subject to nonnegative final inventory of every non-feedstock and at least one MAX. Ignoring ordering makes this a lower bound. Each optimal firing multiset was then scheduled and replayed from zero intermediate stock, attaining that lower bound. Thus an unseeded catalytic cycle cannot invalidate the claimed minimum. The model includes both directions of every channel in the complete 86-formula catalog. HiGHS reported optimality with zero relative gap. These are computational results, not Lean formalizations.
+For event count, integer optimization minimizes total firings subject to nonnegative final inventory of every non-feedstock and at least one MAX. Ignoring ordering makes this a lower bound. Each optimal firing multiset was then scheduled and replayed from zero intermediate stock, attaining that lower bound. Thus an unseeded catalytic cycle cannot invalidate the claimed minimum. The model includes both directions of every channel in the complete 86-formula catalog. HiGHS proved optimality with zero relative gap.
 
 For type count, exhaustive breadth-first search tracks the set of synthesizable species. A reaction can establish its outputs when all its inputs are established. Unlimited feed allows any established intermediate to be remade in any finite quantity, including two copies of one reactant. Once a type has fired, all species on both sides are established; repeating it cannot add another species. Search depth therefore counts new types exactly. The first depth reaching MAX is the minimum. Recursive expansion and inventory replay give finite batches without borrowed intermediates.
 
 The objectives are independent. The last table column describes an explicit type-minimal witness, not the minimum event count among all type-minimal witnesses. In particular, the seven-event A,C ladder uses seven types; the four-type A,C recipe shown here uses eleven events.
 
-If the final inventory must contain only MAX molecules and no other products, none of these feed supplies can do that using these small closed steps: reversing such a finite route would escape from a collection of only maxima, contradicting the earlier obstruction.
+None of these feed supplies can produce MAX without byproducts under these small closed steps, since reversing such a route would escape from a collection of only maxima, contradicting the earlier obstruction.
 
 ## Supply A, B
 

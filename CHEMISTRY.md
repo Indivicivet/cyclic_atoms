@@ -1,6 +1,6 @@
 # Chemistry of cyclic atoms
 
-For reactions whose states contain only molecules, see [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md). The 3→19 split cannot be composed from closed steps with at most two inputs and two outputs, starting with only maxima and no additional reagents.
+For reactions whose states contain only molecules, see [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md). The 3→19 split cannot be built from closed steps with at most two inputs and two outputs, starting from maxima alone.
 
 We can define reactions where atoms stay intact, bonds break, and exposed points pair with points on other fragments. Two constraints govern which reactions exist. Element counts must match, and new bonds must come from exact coincidences of cyclic point sets.
 

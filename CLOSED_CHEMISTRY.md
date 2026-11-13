@@ -2,7 +2,7 @@
 
 For minimum-length routes from binary feedstocks, see [SYNTHESIS.md](SYNTHESIS.md). The event minima for supplies (M35,M37), (M35,M57), (M37,M57), and all three are 11, 7, 16, and 7. The corresponding minimum numbers of distinct reaction types are 7, 4, 7, and 4, with molecular byproducts allowed.
 
-A maximum 3–5–7 molecule can be an output of a nontrivial 2→2 reaction: the complete catalog contains 29 such formula channels. The smallest example is `M35 + T(30,13,5) → Tmax + D5`, with sizes `8 + 48 → 54 + 2`.
+A maximum 3-5-7 molecule can be an output of a nontrivial 2→2 reaction; the catalog has 29 such formula channels. The smallest is `M35 + T(30,13,5) → Tmax + D5`, with sizes `8 + 48 → 54 + 2`.
 
 The separate obstruction proved below concerns starting with only maxima. It does not exclude forming a maximum from other molecules, or reacting a maximum with a different partner.
 
@@ -12,9 +12,9 @@ An open bonded fragment is not a free atom, but it is not a molecule either. All
 
 With our original separate cut and join operations, requiring every state to be closed prevents nontrivial chemistry. Cutting a connected molecule exposes sites. Superposing closed molecules cannot form new bonds without occupancy exceeding two. Rotating whole molecules preserves their structures.
 
-An instantaneous 1→2, 2→1 or 2→2 event therefore needs an additional concerted operation: old bonds break and new bonds form in one event, with closed configurations before and after. There is no recorded open intermediate.
+An instantaneous 1→2, 2→1 or 2→2 event therefore needs a concerted operation in which old bonds break and new ones form in a single step, leaving closed configurations before and after.
 
-For the enumeration here, we use the most permissive endpoint model: two collections of existing molecules with the same atom inventory give a candidate channel. This does not establish continuous motion or a mechanism avoiding isolated atoms at every instant under additional dynamics. Restrictions on simultaneous motions or retained fragments could remove channels. The impossibility result for maxima survives those restrictions because even this permissive model is blocked.
+Here we use the permissive endpoint model: any two collections of molecules with the same element counts form a candidate channel. Adding constraints on continuous motion or retained fragments could rule out some of these channels, though the impossibility result for maxima holds regardless since even this permissive model is blocked.
 
 ## The small reaction candidates
 
@@ -38,9 +38,9 @@ $$
 M35+M37\ \rightleftharpoons\ T(10,3,3)+D3.
 $$
 
-The extracted 3-atoms leave as an already bonded dimer in this description. The earlier sequential six-cut construction exposed those atoms; it is not a proof of a path with no free atoms. The concerted description specifies closed endpoints and does not supply a continuous mechanism.
+Here the extracted 3-atoms leave as a bonded dimer in one step rather than passing through free atoms.
 
-The complete catalog has 86 molecular formulas: 80 using all three elements, three binary formulas and three dimer formulas. Completeness follows from the parity classification in [CHEMISTRY.md](CHEMISTRY.md). Connectivity and double occupancy are checked for every witness. We group singleton and unordered pair inventories by their element counts and match equal inventories. Equations with the same formula multiset on both sides are excluded. Geometric isomers and formula-preserving isomerizations are not counted separately.
+The complete catalog has 86 molecular formulas: 80 using all three elements, three binary formulas and three dimer formulas. Completeness follows from the parity classification in [CHEMISTRY.md](CHEMISTRY.md), and connectivity and double occupancy are checked for every witness. We match singleton and pair inventories with equal element counts, excluding trivial identities and without distinguishing geometric isomers.
 
 ## Two molecules producing a maximum
 
@@ -53,13 +53,13 @@ Here are four of the 29 nontrivial formula channels. The notation is `T(a,b,c) =
 | `2 T(20,11,5)` | `Tmax + T(5,8,5)` | `36 + 36 → 54 + 18` |
 | `2 T(25,12,5)` | `Tmax + T(15,10,5)` | `42 + 42 → 54 + 30` |
 
-The first achieves the smallest possible total input size, 56: the second output must contain at least two atoms. It is the only formula channel producing a maximum plus a dimer. All 29 channels and exact witnesses are saved under `maximum_as_product` in the JSON output.
+The first has the smallest possible total input size (56), since the second output must contain at least two atoms. It is the only formula channel producing a maximum plus a dimer. All 29 channels and exact witnesses are saved under `maximum_as_product` in the JSON output.
 
 The first also has an exact ten-bond exchange construction. In CRT coordinates, `T(30,13,5)` has six full z-slices and one exceptional 5-atom in the remaining slice. Place M35 in that remaining slice. The supports intersect precisely in that exceptional 5-atom's five points, which also form one of M35's 5-atoms.
 
-Splice out those two 5-atoms. Their ten old bonds are replaced by five cross-bonds between the remaining fragments and five parallel bonds between the extracted atoms. The products are exactly the maximum and D5. The maximum retains 100 original bonds across the two reactants. In a concerted description the extracted atoms form their dimer in the same event; a sequential cut-first realization would expose them and would not satisfy a no-free-atoms requirement.
+Splice out those two 5-atoms. Their ten old bonds are replaced by five cross-bonds between the remaining fragments and five parallel bonds between the extracted atoms. The products are exactly the maximum and D5. The maximum retains 100 original bonds across the two reactants, and in a concerted step the extracted atoms form their dimer directly without an exposed-atom intermediate.
 
-`maximum_exchange()` in the enumeration script constructs and verifies the exact endpoint geometry. The other 28 entries are checked balanced endpoint candidates; no particular low-cut mechanism is asserted for them.
+`maximum_exchange()` in the enumeration script constructs and verifies the exact endpoint geometry. The other 28 entries are checked endpoint channels without constructed low-cut mechanisms.
 
 ## Why a collection of only maxima cannot start changing
 
@@ -90,7 +90,7 @@ $$
 \quad\text{by closed steps with at most two inputs and two outputs.}
 $$
 
-This assumes no additional starting reagents or borrowed catalysts. Adding them changes the reachability problem. Allowing open fragments or larger concerted events also changes it. This result does not identify the smallest larger event that could unlock a sequence.
+This assumes no extra starting reagents, borrowed catalysts, open intermediates, or larger concerted steps.
 
 ## Reproduce
 
