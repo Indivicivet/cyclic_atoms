@@ -1,5 +1,9 @@
 # Shortest syntheses of MAX3,5,7
 
+For the theorem that any two binary feed species can synthesize every
+3-5-7 target, including finite recipes and Lean proofs, see
+[UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md).
+
 `A = M35 = [5,3,0]`, `B = M37 = [7,0,3]`, `C = M57 = [0,7,5]`, `Dp = p_2`, and `MAX = [35,14,5]`, where `[a,b,c]` denotes `3_a 5_b 7_c`.
 
 From unlimited feedstocks of the listed supplies (with closed byproducts allowed), we minimize total reaction events and distinct reaction types (counting reversible equations once, and parallel firings as separate events) under the `1→2`, `2→1`, and `2→2` model from [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md). All witness routes use only `2→2` steps.

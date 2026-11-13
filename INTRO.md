@@ -32,6 +32,12 @@ The atom, configuration, and molecule definitions are formalized in Lean 4 in [`
 
 If every intermediate must consist entirely of molecules, the three-copy split cannot be composed from reactions with at most two inputs and two outputs, starting with only maxima. [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md) gives the obstruction and the possible small closed reaction formulas.
 
+With molecular byproducts allowed, any two of M35, M37 and M57 suffice to
+synthesize any 3-5-7 molecule, using only 2→2 closed-endpoint reactions.
+[UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md) gives the proof, explicit finite
+recipes for every target, and Lean certificates for the finite parity-formula
+model. The original circle-to-CRT reduction remains a paper proof.
+
 ## Basic examples
 
 Two identical atoms $(2, 0), (2, 0)$ form a molecule with two vertices joined by two bonds. The atoms are distinct even though their points coincide.

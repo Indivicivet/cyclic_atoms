@@ -118,7 +118,7 @@ def event_search(species, channels, feeds):
     }
 
 
-def expand_types(channels, plan, feeds):
+def expand_types(channels, plan, feeds, target=TARGET):
     """Build a finite batch for a support plan, without borrowing intermediates."""
     available = set(feeds)
     producers = {}
@@ -152,11 +152,11 @@ def expand_types(channels, plan, feeds):
             stock.update(m for m in right if m not in feeds)
             steps.append((left, right))
 
-    produce(TARGET, 1)
+    produce(target, 1)
     return oriented, steps
 
 
-def audit(steps, feeds):
+def audit(steps, feeds, target=TARGET):
     """Replay a recipe and find finite initial feed counts; forbid other loans."""
     stock = Counter()
     initial = Counter()
@@ -170,8 +170,11 @@ def audit(steps, feeds):
             raise ValueError("recipe borrows an unavailable intermediate")
         stock.subtract(needed)
         stock.update(right)
-    if stock[TARGET] < 1:
-        raise ValueError("recipe does not produce MAX")
+    if target in feeds and stock[target] < 1:
+        initial[target] += 1
+        stock[target] += 1
+    if stock[target] < 1:
+        raise ValueError("recipe does not produce the target")
     return {
         "initial": [(m, n) for m, n in initial.items() if n],
         "final": [(m, n) for m, n in stock.items() if n],

@@ -20,6 +20,36 @@ import visualization.core as core
 
 
 class ChemistryChecks(unittest.TestCase):
+    def test_every_target_from_each_binary_feed_pair(self):
+        results = json.loads(
+            (Path(__file__).parent / "output/universal_synthesis.json").read_text()
+        )
+        species = closed.catalog()
+        channels = closed.reactions(species)
+        allowed = set(channels) | {(right, left) for left, right in channels}
+        self.assertEqual(len(results["feeds"]), 3)
+        for feeds, batches in zip(results["feeds"], results["batches"]):
+            feeds = tuple(map(tuple, feeds))
+            self.assertEqual(len(set(feeds)), 2)
+            self.assertTrue(set(feeds) <= set(synthesis.FEEDS))
+            self.assertEqual({tuple(r["target"]) for r in batches}, set(species))
+            for result in batches:
+                steps = [
+                    tuple(tuple(map(tuple, side)) for side in step)
+                    for step in result["steps"]
+                ]
+                self.assertTrue(all(step in allowed for step in steps))
+                self.assertTrue(all(len(side) == 2 for step in steps for side in step))
+                batch = synthesis.audit(steps, feeds, tuple(result["target"]))
+                for side in ("initial", "final"):
+                    self.assertEqual(
+                        [(tuple(m), n) for m, n in result["batch"][side]], batch[side]
+                    )
+                self.assertEqual(
+                    tuple(sum(m[i] * n for m, n in batch["initial"]) for i in range(3)),
+                    tuple(sum(m[i] * n for m, n in batch["final"]) for i in range(3)),
+                )
+
     def test_synthesis_recipes_without_borrowed_molecules(self):
         results = json.loads(
             (Path(__file__).parent / "output/synthesis.json").read_text()
