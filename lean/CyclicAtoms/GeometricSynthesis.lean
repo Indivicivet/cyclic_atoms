@@ -41,6 +41,97 @@ theorem every_original_molecule_synthesizable_formula357 (C : Config)
   rw [hf] at hpos ⊢
   exact every_parity_formula_synthesizable357 p a b c hpos
 
+theorem every_elements357_formula_synthesizable (C : Config)
+    (hm : IsMolecule C) (hC : Elements357 C) (p : Fin 3) :
+    Synthesizable formulas357 reactionTable357 (feedPair357 p) (configFormula C) := by
+  obtain ⟨g⟩ := original_molecule_grid_alignment hC hm
+  by_cases hinj : Function.Injective g.lines
+  · obtain ⟨α, β, γ, hmask⟩ := g.parityMask_exists hm hinj
+    have hf := g.formula hinj
+    rw [hmask, parityMask_counts] at hf
+    obtain ⟨a, b, c, habc⟩ := rawParityFormula_normalized
+      ⟨weight α, by have := weight_le α; omega⟩
+      ⟨weight β, by have := weight_le β; omega⟩
+      ⟨weight γ, by have := weight_le γ; omega⟩
+    have hcf : configFormula C = parityFormula a b c := hf.trans habc
+    have hne : 0 < (parityFormula a b c).n3 ∨ 0 < (parityFormula a b c).n5 ∨
+        0 < (parityFormula a b c).n7 := by
+      let root : Fin C.length := ⟨0, hm.connected.1⟩
+      rcases hC root with hr | hr | hr
+      · left; exact hcf ▸ multiplicity_pos ⟨root, hr⟩
+      · right; left; exact hcf ▸ multiplicity_pos ⟨root, hr⟩
+      · right; right; exact hcf ▸ multiplicity_pos ⟨root, hr⟩
+    have hz3 : (parityFormula a b c).n3 = 0 →
+        (parityFormula a b c).n5 ≤ 7 ∧ (parityFormula a b c).n7 ≤ 5 := by
+      intro h0
+      have hm3 : C.multiplicity 3 = 0 := by rw [← hcf] at h0; exact h0
+      simpa [← hcf, configFormula] using g.no_element_3_bounds hm hinj hm3
+    have hz5 : (parityFormula a b c).n5 = 0 →
+        (parityFormula a b c).n3 ≤ 7 ∧ (parityFormula a b c).n7 ≤ 3 := by
+      intro h0
+      have hm5 : C.multiplicity 5 = 0 := by rw [← hcf] at h0; exact h0
+      simpa [← hcf, configFormula] using g.no_element_5_bounds hm hinj hm5
+    have hz7 : (parityFormula a b c).n7 = 0 →
+        (parityFormula a b c).n3 ≤ 5 ∧ (parityFormula a b c).n5 ≤ 3 := by
+      intro h0
+      have hm7 : C.multiplicity 7 = 0 := by rw [← hcf] at h0; exact h0
+      simpa [← hcf, configFormula] using g.no_element_7_bounds hm hinj hm7
+    rw [hcf]
+    exact connected_parity_formula_synthesizable357 p a b c hne hz3 hz5 hz7
+  · obtain ⟨i, j, hij, hne⟩ : ∃ i j : Fin C.length, g.lines i = g.lines j ∧ i ≠ j := by
+      by_contra hall
+      exact hinj fun i j hij => by_contra fun hne => hall ⟨i, j, hij, hne⟩
+    have hsame : Atom.SamePoints (C.get i) (C.get j) := by
+      intro x
+      rw [g.points, g.points, hij]
+    have htwo := identical_atoms_molecule_only_two hm hne hsame
+    have hcard_univ : (Finset.univ : Finset (Fin C.length)).card = 2 := by
+      have hu : (Finset.univ : Finset (Fin C.length)) = {i, j} := by
+        ext k
+        simp [htwo k]
+      rw [hu, Finset.card_pair hne]
+    have hmult : ∀ r : Nat, C.multiplicity r = if (C.get i).p = r then 2 else 0 := by
+      intro r
+      rw [Config.multiplicity, filter_length_eq_card]
+      have halleq : ∀ k : Fin C.length, (C.get k).p = (C.get i).p := by
+        intro k
+        rcases htwo k with hk | hk
+        · rw [hk]
+        · rw [hk]; exact (g.element j).symm.trans (hij.symm ▸ g.element i)
+      by_cases hr : (C.get i).p = r
+      · have hfilt : Finset.univ.filter (fun k : Fin C.length => (C.get k).p == r) =
+            Finset.univ := by
+          ext k
+          simpa only [Finset.mem_filter, Finset.mem_univ, true_and, iff_true,
+            beq_iff_eq, ← List.get_eq_getElem] using (halleq k).trans hr
+        rw [if_pos hr, hfilt, hcard_univ]
+      · have hfilt : Finset.univ.filter (fun k : Fin C.length => (C.get k).p == r) = ∅ := by
+          ext k
+          simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.not_mem_empty,
+            iff_false, beq_iff_eq, ← List.get_eq_getElem]
+          rw [halleq k]
+          exact hr
+        rw [if_neg hr, hfilt, Finset.card_empty]
+    rcases hC i with h3 | h5 | h7
+    · have hf : configFormula C = formula357 ⟨3, by decide⟩ := by
+        unfold configFormula
+        rw [hmult 3, hmult 5, hmult 7, h3]
+        decide
+      rw [hf]
+      exact every_catalog_formula_synthesizable357 p ⟨3, by decide⟩
+    · have hf : configFormula C = formula357 ⟨1, by decide⟩ := by
+        unfold configFormula
+        rw [hmult 3, hmult 5, hmult 7, h5]
+        decide
+      rw [hf]
+      exact every_catalog_formula_synthesizable357 p ⟨1, by decide⟩
+    · have hf : configFormula C = formula357 ⟨0, by decide⟩ := by
+        unfold configFormula
+        rw [hmult 3, hmult 5, hmult 7, h7]
+        decide
+      rw [hf]
+      exact every_catalog_formula_synthesizable357 p ⟨0, by decide⟩
+
 theorem formula_beq_true (a b : Formula) : (a == b) = true ↔ a = b := by
   cases a with
   | mk a3 a5 a7 =>
@@ -274,19 +365,30 @@ theorem every_original_molecule_synthesizable357 (C : Config)
   synthesis_geometric p ⟨C, hm, hC⟩
     (every_original_molecule_synthesizable_formula357 C hm hC h3 h5 h7 p)
 
-/-- Equivalent public statement using exactly the ordinary element set {3,5,7}. -/
+/-- Main end-to-end theorem: any molecule using only elements from {3,5,7}
+(1-, 2-, or 3-element) can be synthesized from any binary feed pair via 2→2 steps. -/
+theorem every_molecule_with_elements357 (C : Config) (hm : IsMolecule C)
+    (helements : ∀ q : Nat, C.HasElement q → q = 3 ∨ q = 5 ∨ q = 7) (p : Fin 3) :
+    ∃ initial final : List Molecule357,
+      (∀ m ∈ initial, m.formula ∈ feedPair357 p) ∧
+      MolecularChain initial final ∧ ∃ m ∈ final, m.config = C := by
+  have hC : Elements357 C := fun i => helements _ ⟨i, rfl⟩
+  obtain ⟨initial, final, hi, hc, ht⟩ :=
+    synthesis_geometric p ⟨C, hm, hC⟩ (every_elements357_formula_synthesizable C hm hC p)
+  exact ⟨initial, final, hi, hc, ⟨⟨C, hm, hC⟩, ht, rfl⟩⟩
+
+/-- Corollary when all three elements {3,5,7} occur in `C`. -/
 theorem every_molecule_with_exact_elements357 (C : Config) (hm : IsMolecule C)
     (helements : ∀ q : Nat, C.HasElement q ↔ q = 3 ∨ q = 5 ∨ q = 7) (p : Fin 3) :
     ∃ initial final : List Molecule357,
       (∀ m ∈ initial, m.formula ∈ feedPair357 p) ∧
-      MolecularChain initial final ∧ ∃ m ∈ final, m.config = C := by
-  have hC : Elements357 C := fun i => (helements _).mp ⟨i, rfl⟩
-  have h3 : C.HasElement 3 := (helements 3).mpr (Or.inl rfl)
-  have h5 : C.HasElement 5 := (helements 5).mpr (Or.inr (Or.inl rfl))
-  have h7 : C.HasElement 7 := (helements 7).mpr (Or.inr (Or.inr rfl))
-  obtain ⟨initial, final, hi, hc, ht⟩ :=
-    every_original_molecule_synthesizable357 C hm hC h3 h5 h7 p
-  exact ⟨initial, final, hi, hc, ⟨⟨C, hm, hC⟩, ht, rfl⟩⟩
+      MolecularChain initial final ∧ ∃ m ∈ final, m.config = C :=
+  every_molecule_with_elements357 C hm (fun q hq => (helements q).mp hq) p
+
+/-- info: 'CyclicAtoms.Geometry.every_molecule_with_elements357' depends on axioms:
+[propext, Classical.choice, Lean.ofReduceBool, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms every_molecule_with_elements357
 
 /-- info: 'CyclicAtoms.Geometry.every_original_molecule_synthesizable357' depends on axioms:
 [propext, Classical.choice, Lean.ofReduceBool, Quot.sound] -/

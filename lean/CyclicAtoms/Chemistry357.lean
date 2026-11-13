@@ -58,6 +58,36 @@ theorem every_parity_formula_synthesizable357 (p : Fin 3)
     rw [← hi]
     exact every_catalog_formula_synthesizable357 p i
 
+/-- Every nonempty connected parity formula (1-, 2-, or 3-element) is in the catalog. -/
+theorem connected_parity_formula_in_catalog357 :
+    ∀ a : Fin 2, ∀ b : Fin 6, ∀ c : Fin 8,
+      (0 < (parityFormula a b c).n3 ∨ 0 < (parityFormula a b c).n5 ∨
+        0 < (parityFormula a b c).n7) →
+      ((parityFormula a b c).n3 = 0 →
+        (parityFormula a b c).n5 ≤ 7 ∧ (parityFormula a b c).n7 ≤ 5) →
+      ((parityFormula a b c).n5 = 0 →
+        (parityFormula a b c).n3 ≤ 7 ∧ (parityFormula a b c).n7 ≤ 3) →
+      ((parityFormula a b c).n7 = 0 →
+        (parityFormula a b c).n3 ≤ 5 ∧ (parityFormula a b c).n5 ≤ 3) →
+      ∃ i : Fin 86, formula357 i = parityFormula a b c := by native_decide
+
+theorem connected_parity_formula_synthesizable357 (p : Fin 3)
+    (a : Fin 2) (b : Fin 6) (c : Fin 8)
+    (hne : 0 < (parityFormula a b c).n3 ∨ 0 < (parityFormula a b c).n5 ∨
+      0 < (parityFormula a b c).n7)
+    (hz3 : (parityFormula a b c).n3 = 0 →
+      (parityFormula a b c).n5 ≤ 7 ∧ (parityFormula a b c).n7 ≤ 5)
+    (hz5 : (parityFormula a b c).n5 = 0 →
+      (parityFormula a b c).n3 ≤ 7 ∧ (parityFormula a b c).n7 ≤ 3)
+    (hz7 : (parityFormula a b c).n7 = 0 →
+      (parityFormula a b c).n3 ≤ 5 ∧ (parityFormula a b c).n5 ≤ 3) :
+    Synthesizable formulas357 reactionTable357 (feedPair357 p)
+      (parityFormula a b c) := by
+  match connected_parity_formula_in_catalog357 a b c hne hz3 hz5 hz7 with
+  | ⟨i, hi⟩ =>
+    rw [← hi]
+    exact every_catalog_formula_synthesizable357 p i
+
 #print axioms every_parity_formula_synthesizable357
 #print axioms parity_factorization
 

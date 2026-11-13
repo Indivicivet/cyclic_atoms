@@ -18,6 +18,8 @@ An in/out assignment exists exactly when the bond graph is bipartite. This does 
 
 [CHEMISTRY.md](CHEMISTRY.md) defines open configurations and atom-conserving cut/join reactions, with scripts and plots in [chemistry/](chemistry/). For three primes, every molecule using all three elements has no repeated coordinate line and is described by three coordinate bit lists, where a line is present when its two fixed coordinate bits differ. This parameterization proves bipartiteness and gives nonnegative rational binary-molecule coefficients whose denominators divide the product of the three primes. Every three-prime molecule therefore has a pure binary recipe in a batch of size dividing that product.
 
+Under the closed-endpoint reaction model of [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md) (element-conserving `1→2`, `2→1`, or `2→2` replacements between molecules, allowing molecular byproducts), any molecule using only elements from $\{3, 5, 7\}$ (one, two, or all three elements) can be formed from an initial pool containing only any two of `M35 = 3_5 5_3`, `M37 = 3_7 7_3`, and `M57 = 5_7 7_5` using `2→2` steps alone. See [UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md) and `every_molecule_with_elements357` in [`lean/CyclicAtoms/GeometricSynthesis.lean`](lean/CyclicAtoms/GeometricSynthesis.lean).
+
 ## Maximum size for three primes
 
 ### Theorem
