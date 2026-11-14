@@ -18,6 +18,20 @@ this includes definition of unambiguous text formats for representing molecules
 
 proven mathematical results, existence results, bounds, and conjectures for results
 
+## [CHEMISTRY.md](CHEMISTRY.md), [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md), [SYNTHESIS.md](SYNTHESIS.md), [UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md), and [chemistry/](chemistry/)
+
+open configurations, cutting and joining molecules, closed-state reactions, shortest syntheses, universal binary synthesis, and reaction plots. Generated figures and JSON outputs are written to `chemistry/output/` (gitignored). On a fresh clone, generate them and run the checks with:
+
+```sh
+python -m chemistry.examples
+python -m chemistry.minimum_split
+python -m chemistry.closed_reactions
+python -m chemistry.synthesis
+python -m chemistry.synthesis_plots
+python -m chemistry.universal_synthesis
+python -m chemistry.verify
+```
+
 ## [zoo/](zoo/)
 
 examples of various structures in exact 0A and 0B notation

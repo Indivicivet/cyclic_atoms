@@ -1,3 +1,7 @@
 import CyclicAtoms.Defs
 import CyclicAtoms.Elementary
 import CyclicAtoms.MaxSize
+import CyclicAtoms.Chemistry357
+import CyclicAtoms.GeometricSynthesis
+import CyclicAtoms.UniversalSynthesis
+import CyclicAtoms.GeneralSynthesis
