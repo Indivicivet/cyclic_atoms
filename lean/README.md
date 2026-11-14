@@ -32,9 +32,22 @@ reachable from any two binary feeds by a finite sequential batch of balanced
 `2→2` replacements, retaining byproducts. Any triple of distinct primes can
 be relabeled to satisfy these bounds, including triples containing 2.
 
-This symbolic proof uses no catalog enumeration, `native_decide`, custom
-axioms, or `sorry`. `Chain.conserves` proves conservation of each element;
-`Chain.card_eq` proves conservation of the number of molecules. Its scope
-is the parity formula catalog. The arbitrary-prime geometric classification
-and realization are proved in the mathematical overview, but their Lean
-bridge to the original `IsMolecule` definition remains specific to 3–5–7.
+The public end-to-end theorem is now
+`GeneralSynthesis.every_molecule_with_elements` in
+[`CyclicAtoms/GeneralSynthesis.lean`](CyclicAtoms/GeneralSynthesis.lean).
+It starts from the original `IsMolecule C` definition and three pairwise
+distinct primes in any order, and constructs finite actual molecular stocks
+whose final stock contains `C` itself. All steps conserve each element and
+replace exactly two molecules with two molecules. Triples containing 2 are
+included without a special assumption on its position.
+
+`GeneralSynthesis.valid_iff_original_molecule` proves that catalog membership
+is equivalent to existence of an original molecule with that formula.
+The proof modules cover general CRT geometry (`PrimeGeometry`), parity
+counting/classification (`PrimeGridCounting`, `PrimeGridClassification`,
+`OriginalClassification`), connected geometric witnesses
+(`PrimeGridRealization`, `PrimeMoleculeWitness`), arbitrary coordinate order
+(`FormulaPermutations`), and lifting to actual stocks (`MolecularSynthesis`).
+The original `Defs.lean` is unchanged. The generalized theorem uses no
+catalog enumeration, `native_decide`, custom axioms, or `sorry`; its guarded
+axiom dependencies are `propext`, `Classical.choice`, and `Quot.sound`.

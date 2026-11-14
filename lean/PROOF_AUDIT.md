@@ -1,6 +1,41 @@
 # End-to-end synthesis theorem
 
-The public theorem is `CyclicAtoms.Geometry.every_molecule_with_elements357` in [GeometricSynthesis.lean](CyclicAtoms/GeometricSynthesis.lean) (with `every_molecule_with_exact_elements357` as a corollary for the three-element case), built directly on [Defs.lean](CyclicAtoms/Defs.lean).
+The general public theorem is
+`CyclicAtoms.GeneralSynthesis.every_molecule_with_elements` in
+[GeneralSynthesis.lean](CyclicAtoms/GeneralSynthesis.lean). It assumes only
+three pairwise distinct natural primes, an original `IsMolecule C`, that
+all elements of `C` lie in the triple, and a binary feed-pair choice.
+It returns finite stocks of actual molecules joined by a `MolecularChain`,
+with `C` itself in the final stock. Each step is a balanced `2→2`
+replacement; `MolecularStep.conserves` verifies conservation for every
+`e : Nat`. `MolecularChain.card_eq` verifies the number of molecules.
+The theorem accepts arbitrary prime order, including a 2 in any position.
+
+The catalog is connected to the original geometry in both directions by
+`GeneralSynthesis.valid_iff_original_molecule`: `Valid p q r f` is equivalent
+to existence of a `Config C` with `IsMolecule C`, permitted elements, and
+formula `f`. Catalog membership is not an extra assumption of the public
+synthesis theorem. Geometry and realizability are discharged by proved
+lemmas, not supplied as axioms or theorem hypotheses.
+
+The general geometric modules are `PrimeGeometry`, `OriginalClassification`,
+`PrimeGridCounting`, `PrimeGridClassification`, `PrimeGridRealization`, and
+`PrimeMoleculeWitness`. `PrimeGeometry` proves the CRT/atom orbit equivalence
+and alignment from original connectedness. `OriginalClassification`
+retains multiplicities and treats duplicate lines as original isolated
+dimers. `PrimeMoleculeWitness` constructs original configurations and proves
+their continuous-point pairing and graph connectedness. `FormulaPermutations`
+handles prime order and `MolecularSynthesis` preserves the requested isomer
+when lifting a finite formula batch.
+
+Guarded axiom dependencies for both the general end-to-end theorem and the
+catalog equivalence are `propext, Classical.choice, Quot.sound`. There are no
+custom axioms, `sorry`s, or `native_decide` dependencies in these results.
+The original definitions in [Defs.lean](CyclicAtoms/Defs.lean) are unchanged.
+
+## Existing 3–5–7 specialization
+
+`CyclicAtoms.Geometry.every_molecule_with_elements357` in [GeometricSynthesis.lean](CyclicAtoms/GeometricSynthesis.lean) (with `every_molecule_with_exact_elements357` as a corollary for the three-element case) is the existing finite-certificate proof built directly on [Defs.lean](CyclicAtoms/Defs.lean).
 
 ```lean
 theorem every_molecule_with_elements357 (C : Config) (hm : IsMolecule C)
@@ -63,8 +98,8 @@ before reacting them, preserving all byproducts and input multiplicities.
 constant number of molecules.
 
 The guarded axiom list is `propext, Classical.choice, Quot.sound`; this module
-uses neither `native_decide` nor unproved axioms. It does **not** generalize
-the circle-to-parity classification or catalog realization from the original
-`Config` / `IsMolecule` definitions. Those arbitrary-prime geometric arguments
-are given in [UNIVERSAL_SYNTHESIS.md](../UNIVERSAL_SYNTHESIS.md), while the
-existing Lean end-to-end bridge continues to cover `{3,5,7}` only.
+uses neither `native_decide` nor unproved axioms. The geometric modules above
+prove its catalog classification and realization from the original
+`Config` / `IsMolecule` definitions, and `GeneralSynthesis` combines these
+with the formula construction to prove the general end-to-end theorem.
+See [UNIVERSAL_SYNTHESIS.md](../UNIVERSAL_SYNTHESIS.md) for the mathematical proof.

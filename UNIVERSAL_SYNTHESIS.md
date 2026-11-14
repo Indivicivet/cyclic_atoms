@@ -116,25 +116,61 @@ gives an ordered finite batch. Finally, the endpoint rule allows any
 geometric isomer with a produced formula to be chosen as that output,
 including the original requested molecule. ∎
 
-### Parameterized Lean proof and its scope
+### Lean proof from the original molecule definition
 
-[`UniversalSynthesis.lean`](lean/CyclicAtoms/UniversalSynthesis.lean) proves
-the symbolic construction for all integer dimensions `p,q ≥ 3`, `r ≥ 2`;
-it does not enumerate prime triples or use `native_decide`.
-`every_valid_formula_from_any_pair` proves reachability of every entry of
-the generalized parity formula catalog from any feed pair.
-`Reachable.batch` converts production trees into finite multiset stocks
-and sequential `2→2` replacements, keeping multiplicities and byproducts.
-`universal_synthesis` combines these results. A multiset records stock
-quantities; the inductive chain records the order of reactions.
+The public theorem is `GeneralSynthesis.every_molecule_with_elements` in
+[`GeneralSynthesis.lean`](lean/CyclicAtoms/GeneralSynthesis.lean). Its
+hypotheses are three pairwise distinct natural primes `p,q,r`, an original
+`IsMolecule C`, the restriction of its elements to `{p,q,r}`, and a choice
+of binary feed pair. It concludes that finite initial and final stocks of
+actual molecules are connected by a `MolecularChain` and that `C` itself
+occurs in the final stock. Every reaction has exactly two inputs and two
+outputs and conserves every natural-number element. Neither a catalog
+membership assumption nor a geometric realization assumption is required.
+The primes may be supplied in any order, including `p=2` or `q=2`.
 
-The new Lean theorem is at the **formula catalog level**. The arbitrary-prime
-circle-to-catalog classification and geometric realization used in the
-mathematical proof above are not formalized by this module. The existing
-end-to-end theorem from the original `IsMolecule` definition remains specific
-to `{3,5,7}`, as described below. The generalized formula theorem has guarded
-axiom dependencies `propext`, `Classical.choice`, and `Quot.sound`, with no
-custom axioms or `sorry`.
+The relationship between formulas and geometry is also an explicit theorem:
+`GeneralSynthesis.valid_iff_original_molecule` proves
+
+```lean
+Valid t.p t.q t.r f ↔
+  ∃ C : Config, IsMolecule C ∧ Elements t.p t.q t.r C ∧
+    configFormula t.p t.q t.r C = f
+```
+
+Here `t` contains the three primes and their distinctness proofs.
+`f` is the triple of atom counts `(np,nq,nr)`, not an extra geometric
+parameter. The right-hand side asserts existence of an original molecule
+with those counts; it does not identify all configurations with the same
+formula. The synthesis theorem retains the particular requested isomer.
+
+The proof separates into checked geometric and synthesis results:
+
+- [`PrimeGeometry.lean`](lean/CyclicAtoms/PrimeGeometry.lean) proves general
+  CRT alignment and the exact correspondence between coordinate lines and
+  original cyclic atom point sets.
+- [`OriginalClassification.lean`](lean/CyclicAtoms/OriginalClassification.lean)
+  derives catalog membership from `IsMolecule`. Repeated identical lines
+  give an isolated dimer; injective lines give a paired connected grid.
+- [`PrimeGridCounting.lean`](lean/CyclicAtoms/PrimeGridCounting.lean) and
+  [`PrimeGridClassification.lean`](lean/CyclicAtoms/PrimeGridClassification.lean)
+  prove parity counting and classification, including missing-element binaries.
+- [`PrimeGridRealization.lean`](lean/CyclicAtoms/PrimeGridRealization.lean) and
+  [`PrimeMoleculeWitness.lean`](lean/CyclicAtoms/PrimeMoleculeWitness.lean)
+  construct actual `IsMolecule` witnesses for every catalog formula, proving
+  both exact pairing and connectedness.
+- [`UniversalSynthesis.lean`](lean/CyclicAtoms/UniversalSynthesis.lean) proves
+  the symbolic construction and finite batches;
+  [`FormulaPermutations.lean`](lean/CyclicAtoms/FormulaPermutations.lean)
+  removes the ordering restriction on the dimensions.
+- [`MolecularSynthesis.lean`](lean/CyclicAtoms/MolecularSynthesis.lean)
+  lifts batches to actual molecular stocks, choosing `C` itself when its
+  formula is produced. The public theorem supplies the proved classification
+  and realization results to this lifting lemma.
+
+The generalized end-to-end theorem has guarded axiom dependencies
+`propext`, `Classical.choice`, and `Quot.sound`. It uses no prime-triple
+enumeration, `native_decide`, custom axioms, or `sorry`.
 
 ## Reduction to an 86-formula catalog
 
