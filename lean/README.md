@@ -4,50 +4,25 @@ Lean 4.19.0 with Mathlib v4.19.0, pinned by `lean-toolchain`, `lakefile.lean`, a
 
 ## Usage
 
-Run `lake update` once in `lean/` to fetch dependencies, then `lake build` (or `lake_rebuild.bat` for a clean rebuild). See [PROOF_AUDIT.md](PROOF_AUDIT.md) for the end-to-end theorem statement and axiom audit.
+Run `lake update` once in `lean/` to fetch dependencies, then `lake build` (or `lake_rebuild.bat` for a clean rebuild). See [PROOF_AUDIT.md](PROOF_AUDIT.md) for theorem statements and axiom checks.
 
 ## Definitions and elementary bounds
 
 - [`CyclicAtoms/Defs.lean`](CyclicAtoms/Defs.lean): Definitions from [`INTRO.md`](../INTRO.md) (`Phase`, `Atom`, `Config`, `RotEquiv`, `IsChiral`, `BondAdj`, `BondReachable`, `IsConnected`, `IsMolecule`, `HasElement`, `multiplicity`, `size`, `InOutAssignment`, `IsBipartite`).
 - [`CyclicAtoms/Elementary.lean`](CyclicAtoms/Elementary.lean): `2B = Σ p` (`two_mul_bonds_eq_sumDeg`, `even_sumDeg_of_paired`) and isolation of identical atoms (`identical_atoms_isolated`, `identical_atoms_molecule_only_two`).
-- [`CyclicAtoms/MaxSize.lean`](CyclicAtoms/MaxSize.lean): Three- and four-prime maximum size upper bounds and layered CRT constructions (`three_prime_upper_bound`, `three_prime_construction_twice`, `four_prime_upper_bound`, `four_prime_construction_twice`). For general element sets, the CRT reduction and uniqueness of $K_{q,p}$ remain unformalized.
+- [`CyclicAtoms/MaxSize.lean`](CyclicAtoms/MaxSize.lean): Three- and four-prime maximum size upper bounds and layered CRT constructions (`three_prime_upper_bound`, `three_prime_construction_twice`, `four_prime_upper_bound`, `four_prime_construction_twice`). Uniqueness of $K_{q,p}$ and the CRT reduction for four or more primes remain unformalized.
 
-## Universal synthesis for `{3, 5, 7}`
+## Universal synthesis for any three distinct primes
 
-The main theorem is `Geometry.every_molecule_with_elements357` in [`CyclicAtoms/GeometricSynthesis.lean`](CyclicAtoms/GeometricSynthesis.lean): any `IsMolecule C` with elements in `{3, 5, 7}` can be formed from any binary feed pair (`M35/M37`, `M35/M57`, or `M37/M57`) via a `MolecularChain` of element-conserving `2→2` molecular replacements (allowing byproducts), producing `C` itself in the final stock.
+`GeneralSynthesis.every_molecule_with_elements` in [`CyclicAtoms/GeneralSynthesis.lean`](CyclicAtoms/GeneralSynthesis.lean) proves that for any three distinct primes `{p, q, r}` in any order (including `2`), any `IsMolecule C` with elements in `{p, q, r}` can be formed from any binary feed pair (`M(p,q)/M(p,r)`, `M(p,q)/M(q,r)`, or `M(p,r)/M(q,r)`) via a `MolecularChain` of element-conserving `2→2` steps (allowing byproducts), producing `C` itself in the final stock. `GeneralSynthesis.valid_iff_original_molecule` proves the equivalence between the parity catalog `Valid` and original `IsMolecule` existence.
 
-- [`CyclicAtoms/Chemistry.lean`](CyclicAtoms/Chemistry.lean): Formulas, `2→2` batch execution, finite grid witnesses, and kernel-checked `parity_factorization`.
-- [`CyclicAtoms/Chemistry357.lean`](CyclicAtoms/Chemistry357.lean) & [`Chemistry357Data.lean`](CyclicAtoms/Chemistry357Data.lean): `native_decide`-checked grid witnesses for all 86 formulas and 258 synthesis batch certificates (regenerated via `python -m chemistry.universal_synthesis`).
-- [`CyclicAtoms/Circle.lean`](CyclicAtoms/Circle.lean), [`GridLines.lean`](CyclicAtoms/GridLines.lean), [`GridAlignment.lean`](CyclicAtoms/GridAlignment.lean), [`Counting357.lean`](CyclicAtoms/Counting357.lean): Circle-to-CRT alignment, injective line exclusion / dimer fallback, parity classification, and single-slice bounds for 2-element molecules.
-- [`CyclicAtoms/GridWitness.lean`](CyclicAtoms/GridWitness.lean), [`GeometryWitness357.lean`](CyclicAtoms/GeometryWitness357.lean), [`GeometryWitnessData.lean`](CyclicAtoms/GeometryWitnessData.lean): Spanning-tree certificates proving `IsMolecule` for all 86 catalog witnesses and lifting formula plans to `MolecularChain`.
+- **Synthesis and prime order:** [`UniversalSynthesis.lean`](CyclicAtoms/UniversalSynthesis.lean), [`FormulaPermutations.lean`](CyclicAtoms/FormulaPermutations.lean), [`MolecularSynthesis.lean`](CyclicAtoms/MolecularSynthesis.lean).
+- **Circle geometry, classification, and witnesses:** [`PrimeGeometry.lean`](CyclicAtoms/PrimeGeometry.lean), [`ElementCounting.lean`](CyclicAtoms/ElementCounting.lean), [`PrimeGrid.lean`](CyclicAtoms/PrimeGrid.lean), [`PrimeGridCounting.lean`](CyclicAtoms/PrimeGridCounting.lean), [`PrimeGridClassification.lean`](CyclicAtoms/PrimeGridClassification.lean), [`OriginalClassification.lean`](CyclicAtoms/OriginalClassification.lean), [`PrimeGridRealization.lean`](CyclicAtoms/PrimeGridRealization.lean), [`PrimeMoleculeWitness.lean`](CyclicAtoms/PrimeMoleculeWitness.lean).
 
-See [`UNIVERSAL_SYNTHESIS.md`](../UNIVERSAL_SYNTHESIS.md) for the mathematical overview.
+The general proof uses only `[propext, Classical.choice, Quot.sound]` (no `native_decide`, `sorry`, or custom axioms).
 
-## Universal synthesis for arbitrary prime triples
+## `{3, 5, 7}` explicit-certificate specialization
 
-[`CyclicAtoms/UniversalSynthesis.lean`](CyclicAtoms/UniversalSynthesis.lean)
-proves `UniversalSynthesis.universal_synthesis`: for all integer dimensions
-`p,q ≥ 3`, `r ≥ 2`, every formula in the generalized parity catalog is
-reachable from any two binary feeds by a finite sequential batch of balanced
-`2→2` replacements, retaining byproducts. Any triple of distinct primes can
-be relabeled to satisfy these bounds, including triples containing 2.
+[`GeometricSynthesis.lean`](CyclicAtoms/GeometricSynthesis.lean) (`Geometry.every_molecule_with_elements357`) verifies the same result for `{3, 5, 7}` using explicit `native_decide`-checked witnesses and 258 finite batch certificates generated by `python -m chemistry.universal_synthesis` ([`Chemistry.lean`](CyclicAtoms/Chemistry.lean), [`Chemistry357.lean`](CyclicAtoms/Chemistry357.lean), [`Chemistry357Data.lean`](CyclicAtoms/Chemistry357Data.lean), [`Circle.lean`](CyclicAtoms/Circle.lean), [`GridLines.lean`](CyclicAtoms/GridLines.lean), [`GridAlignment.lean`](CyclicAtoms/GridAlignment.lean), [`Counting357.lean`](CyclicAtoms/Counting357.lean), [`GridWitness.lean`](CyclicAtoms/GridWitness.lean), [`GeometryWitness357.lean`](CyclicAtoms/GeometryWitness357.lean), [`GeometryWitnessData.lean`](CyclicAtoms/GeometryWitnessData.lean)).
 
-The public end-to-end theorem is now
-`GeneralSynthesis.every_molecule_with_elements` in
-[`CyclicAtoms/GeneralSynthesis.lean`](CyclicAtoms/GeneralSynthesis.lean).
-It starts from the original `IsMolecule C` definition and three pairwise
-distinct primes in any order, and constructs finite actual molecular stocks
-whose final stock contains `C` itself. All steps conserve each element and
-replace exactly two molecules with two molecules. Triples containing 2 are
-included without a special assumption on its position.
-
-`GeneralSynthesis.valid_iff_original_molecule` proves that catalog membership
-is equivalent to existence of an original molecule with that formula.
-The proof modules cover general CRT geometry (`PrimeGeometry`), parity
-counting/classification (`PrimeGridCounting`, `PrimeGridClassification`,
-`OriginalClassification`), connected geometric witnesses
-(`PrimeGridRealization`, `PrimeMoleculeWitness`), arbitrary coordinate order
-(`FormulaPermutations`), and lifting to actual stocks (`MolecularSynthesis`).
-The original `Defs.lean` is unchanged. The generalized theorem uses no
-catalog enumeration, `native_decide`, custom axioms, or `sorry`; its guarded
-axiom dependencies are `propext`, `Classical.choice`, and `Quot.sound`.
+See [`UNIVERSAL_SYNTHESIS.md`](../UNIVERSAL_SYNTHESIS.md) for the mathematical proof.

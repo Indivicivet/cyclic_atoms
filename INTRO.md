@@ -32,7 +32,7 @@ The atom, configuration, and molecule definitions are formalized in Lean 4 in [`
 
 If every intermediate must consist entirely of molecules, the three-copy split cannot be composed from reactions with at most two inputs and two outputs, starting with only maxima. [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md) gives the obstruction and the possible small closed reaction formulas. Closed reactions with at most two inputs and two outputs require at least three distinct elements; with only one or two prime elements, the only molecules are dimers and a single binary molecule, leaving no nontrivial `1↔2` or `2↔2` balance.
 
-With molecular byproducts allowed, any two of `M35`, `M37`, and `M57` suffice to form any molecule whose elements lie in `{3, 5, 7}` using `2→2` closed-endpoint reactions ([UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md), formalized in [`lean/CyclicAtoms/GeometricSynthesis.lean`](lean/CyclicAtoms/GeometricSynthesis.lean); see [the proof audit](lean/PROOF_AUDIT.md)).
+With molecular byproducts allowed, for any three distinct primes `{p, q, r}`, any two of the binary molecules `M(p,q)`, `M(p,r)`, and `M(q,r)` suffice to form any molecule whose elements lie in `{p, q, r}` using `2→2` closed-endpoint reactions ([UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md), formalized in [`lean/CyclicAtoms/GeneralSynthesis.lean`](lean/CyclicAtoms/GeneralSynthesis.lean); see [the proof audit](lean/PROOF_AUDIT.md)).
 
 ## Basic examples
 
