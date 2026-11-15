@@ -12,7 +12,7 @@ Set $L$ to the product of the distinct prime elements. Rotate a molecule so that
 
 For distinct primes $p$ and $q$, the only molecule with element set $\{p, q\}$ has $q$ p-atoms and $p$ q-atoms, with bond graph $K_{q,p}$. A p-atom meets $p$ different q-atoms, since atoms of different prime elements meet in at most one point. Each of those q-atoms meets $q$ p-atoms, forcing the entire product grid and the complete bipartite graph. Identical atoms cannot join this molecule.
 
-An in/out assignment exists exactly when the bond graph is bipartite. This does not imply that the graph is planar or has a physical circle-contact realisation. For example, the 23-atom construction for $\{2, 3, 5\}$ below has graph $K_{5,3}$ with every edge subdivided. It is bipartite but non-planar. Every molecule with at most three distinct prime elements is bipartite, by the parity parameterization in [CHEMISTRY.md](CHEMISTRY.md#parity-parameterization). Four or more distinct primes remains open.
+An in/out assignment exists exactly when the bond graph is bipartite. This does not imply that the graph is planar or has a physical circle-contact realisation. For example, the 23-atom construction for $\{2, 3, 5\}$ below has graph $K_{5,3}$ with every edge subdivided. It is bipartite but non-planar. Every molecule with at most three distinct prime elements is bipartite, by the parity parameterization in [CHEMISTRY.md](CHEMISTRY.md#parity-parameterization). This fails with four distinct primes: [BIPARTITENESS.md](BIPARTITENESS.md) constructs a connected 33-atom molecule of formula `2_19 3_6 5_4 7_4` containing a 7-cycle, with exact circle phases and a computational verification.
 
 ## Reactions and the three-prime parity parameterization
 
@@ -74,7 +74,7 @@ An earlier search reported 35 molecules with element set $\{2, 3, 5\}$ up to rot
 
 Earlier MILP runs reported matching lower and upper bounds for $(2,3,5,7):159$, $(2,3,5,11):247$, $(2,3,7,11):337$, $(2,5,7,13):605$, $(3,5,7,11):590$, $(3,5,7,13):696$, $(3,5,11,13):1064$, $(3,7,11,13):1376$, and $(5,7,11,13):1662$, all of which agree with $M(s,p,q,r)$ above (which also gives $908$ for $(3,5,7,17)$ and $2104$ for $(3,7,13,17)$).
 
-A broader speculation is that for every finite set of at least two distinct primes there is a maximum molecule occupying every grid point twice, with all smallest-element atoms on one side of a bipartition and the other atoms on the other side. This remains open for five or more primes. Other questions are whether every molecule is bipartite, how to classify maxima and symmetries, what changes for composite elements, and which graphs admit physical geometric realisations.
+A broader speculation is that for every finite set of at least two distinct primes there is a maximum molecule occupying every grid point twice, with all smallest-element atoms on one side of a bipartition and the other atoms on the other side. This remains open for five or more primes. Other questions are how to classify maxima and symmetries, what changes for composite elements, and which graphs admit physical geometric realisations. The question of whether every molecule is bipartite is answered negatively in [BIPARTITENESS.md](BIPARTITENESS.md).
 
 ### General $n$-prime bounds and conjecture
 
