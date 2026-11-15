@@ -71,18 +71,23 @@ def draw_common_circle(ax, atoms, occupancy):
 
 
 def draw_separated_rings(ax, atoms, occupancy, graph):
-    radii = [0.30 + 0.022 * i for i in range(len(atoms))]
+    # Separate neighbouring cycle atoms radially so their bonds are not hidden
+    # beneath the site markers. Reordering rings preserves every site angle.
+    ring_order = (0, 2, 4, *range(7, 14), 6, *range(14, 24), 1, 3, 5, *range(24, 33))
+    assert sorted(ring_order) == list(range(len(atoms)))
+    radii = {i: 0.30 + 0.022 * rank for rank, i in enumerate(ring_order)}
     cycle_pairs = {frozenset((i, (i + 1) % 7)) for i in range(7)}
     for phase, owners in occupancy.items():
+        if frozenset(owners) in cycle_pairs:
+            continue
         points = [position(phase, radii[i]) for i in owners]
-        cycle_bond = frozenset(owners) in cycle_pairs
         ax.plot(
             [point[0] for point in points],
             [point[1] for point in points],
-            color="#c73043" if cycle_bond else "#a2aeb7",
-            lw=2 if cycle_bond else 0.65,
-            alpha=1 if cycle_bond else 0.65,
-            zorder=2 if cycle_bond else 1,
+            color="#a2aeb7",
+            lw=0.65,
+            alpha=0.65,
+            zorder=1,
         )
     for i, atom in enumerate(atoms):
         ax.add_patch(
@@ -105,13 +110,40 @@ def draw_separated_rings(ax, atoms, occupancy, graph):
             linewidths=0.3,
             zorder=4,
         )
+    cycle_bonds = [
+        (phase, owners)
+        for phase, owners in occupancy.items()
+        if frozenset(owners) in cycle_pairs
+    ]
+    assert len(cycle_bonds) == 7
+    for phase, owners in cycle_bonds:
+        points = [position(phase, radii[i]) for i in owners]
+        ax.plot(
+            [point[0] for point in points],
+            [point[1] for point in points],
+            color="#c73043",
+            lw=2.2,
+            solid_capstyle="round",
+            zorder=5,
+        )
+        ax.text(
+            *position(phase, sum(radii[i] for i in owners) / 2),
+            "–".join("ABCDEFH"[i] for i in sorted(owners)),
+            ha="center",
+            va="center",
+            fontsize=9,
+            fontweight="bold",
+            color="#b91e35",
+            bbox={"boxstyle": "round,pad=0.2", "fc": BACKGROUND, "ec": "none"},
+            zorder=6,
+        )
     assert all(graph.has_edge(i, (i + 1) % 7) for i in range(7))
     ax.set_title("The same points, with rings separated", fontsize=17, pad=20)
     ax.text(
         0.5,
         -0.045,
-        "One ring per atom; angles are unchanged.\n"
-        "Spokes join paired sites. Red spokes trace the seven-cycle.",
+        "Rings reordered for clarity; all site angles are unchanged.\n"
+        "The seven labelled red bonds form A–B–C–D–E–F–H–A.",
         transform=ax.transAxes,
         ha="center",
         va="top",
