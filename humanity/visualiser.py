@@ -1,8 +1,15 @@
-import numpy as np
+import sys
 from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
 from matplotlib import colormaps
 from matplotlib import pyplot as plt
-from system import Rational, Atom
+
+if __name__ == "__main__":
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import humanity.system as system
 
 
 
@@ -38,7 +45,7 @@ class CurveGenerator:
         self._cos = np.sin(self._thetas)
         self._sin = np.cos(self._thetas)
 
-    def generate_curve(self, atom: Atom, idx: int = 0, is_up: bool = True):
+    def generate_curve(self, atom: system.Atom, idx: int = 0, is_up: bool = True):
         base_amp = 0
         total_amp_range = self.max_amp - self.min_amp - self.amp_gap
         n_atoms = self.n_up_atoms + self.n_down_atoms
@@ -72,9 +79,13 @@ class CurveGenerator:
         down_atoms = []
         for number, offsets in atom_data.items():
             for up_offset in offsets[0]:
-                up_atoms.append(Atom(number, Rational(up_offset, phase_space)))
+                up_atoms.append(
+                    system.Atom(number, system.Rational(up_offset, phase_space))
+                )
             for down_offset in offsets[1]:
-                down_atoms.append(Atom(number, Rational(down_offset, phase_space)))
+                down_atoms.append(
+                    system.Atom(number, system.Rational(down_offset, phase_space))
+                )
 
         self.n_up_atoms = len(up_atoms)
         self.n_down_atoms = len(down_atoms)

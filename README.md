@@ -40,6 +40,9 @@ examples of various structures in exact 0A and 0B notation
 
 scripts to visualize atoms and molecules in various ways (direct, pretty, topological, etc)
 
+Browse molecules with formula labels, composition thumbnails and multiple views:
+`python visualization/zoo_explorer.py`. See the [explorer guide](visualization/README.md#molecule-zoo-explorer).
+
 ## [lean/](lean/)
 
 formalized proofs in lean (TODO expand)

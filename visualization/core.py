@@ -139,10 +139,16 @@ def finish_figure(fig, output=None, dpi=180):
         plt.close(fig)
 
 
-def circle(atoms, output=None, title=None, highlight=0, dpi=180):
+def circle(atoms, output=None, title=None, highlight=0, dpi=180, ax=None):
+    """Draw concentric rings; supplied axes remain owned by the caller."""
     occ, G = analyze(atoms)
     n = len(atoms)
-    fig, ax = plt.subplots(figsize=(11, 11), subplot_kw={"aspect": "equal"})
+    embedded = ax is not None
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(11, 11), subplot_kw={"aspect": "equal"})
+    else:
+        fig = ax.figure
+        ax.set_aspect("equal")
     radii = [0.13 + 0.79 * (i / max(1, n - 1)) for i in range(n)]
     for i, atom in enumerate(atoms):
         rad = radii[i]
@@ -202,18 +208,26 @@ def circle(atoms, output=None, title=None, highlight=0, dpi=180):
     ax.set_ylim(-1.05, 1.05)
     ax.axis("off")
     fig.tight_layout()
-    finish_figure(fig, output, dpi)
+    if not embedded:
+        finish_figure(fig, output, dpi)
 
 
-def graph(atoms, output=None, title=None, dpi=180):
+def graph(atoms, output=None, title=None, dpi=180, ax=None):
+    """Draw the bond graph; supplied axes remain owned by the caller."""
     occ, G = analyze(atoms)
     if len(atoms) > 150:
         raise ValueError(
             "Graph is too large for this overview; use a structured map or concentric view"
         )
     pos = nx.spring_layout(G, seed=12, iterations=250)
-    fig, ax = plt.subplots(figsize=(12, 9))
-    nx.draw_networkx_edges(G, pos, ax=ax, width=0.8, alpha=0.45)
+    embedded = ax is not None
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(12, 9))
+    else:
+        fig = ax.figure
+    nx.draw_networkx_edges(
+        G, pos, ax=ax, width=0.8, alpha=0.45, edge_color=plt.rcParams["text.color"]
+    )
     for p in sorted({a[0] for a in atoms}):
         nodes = [i for i, a in enumerate(atoms) if a[0] == p]
         nx.draw_networkx_nodes(
@@ -238,4 +252,5 @@ def graph(atoms, output=None, title=None, dpi=180):
     ax.axis("off")
     ax.set_title(title or f"{len(atoms)} atoms — bond graph; labels are 0A indices")
     fig.tight_layout()
-    finish_figure(fig, output, dpi)
+    if not embedded:
+        finish_figure(fig, output, dpi)
