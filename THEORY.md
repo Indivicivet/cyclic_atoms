@@ -12,7 +12,13 @@ Set $L$ to the product of the distinct prime elements. Rotate a molecule so that
 
 For distinct primes $p$ and $q$, the only molecule with element set $\{p, q\}$ has $q$ p-atoms and $p$ q-atoms, with bond graph $K_{q,p}$. A p-atom meets $p$ different q-atoms, since atoms of different prime elements meet in at most one point. Each of those q-atoms meets $q$ p-atoms, forcing the entire product grid and the complete bipartite graph. Identical atoms cannot join this molecule.
 
-An in/out assignment exists exactly when the bond graph is bipartite. This does not imply that the graph is planar or has a physical circle-contact realisation. For example, the 23-atom construction for $\{2, 3, 5\}$ below has graph $K_{5,3}$ with every edge subdivided. It is bipartite but non-planar. Whether every prime-element molecule is bipartite remains open here.
+An in/out assignment exists exactly when the bond graph is bipartite. This does not imply that the graph is planar or has a physical circle-contact realisation. For example, the 23-atom construction for $\{2, 3, 5\}$ below has graph $K_{5,3}$ with every edge subdivided. It is bipartite but non-planar. Every molecule with at most three distinct prime elements is bipartite, by the parity parameterization in [CHEMISTRY.md](CHEMISTRY.md#parity-parameterization). Four or more distinct primes remains open.
+
+## Reactions and the three-prime parity parameterization
+
+[CHEMISTRY.md](CHEMISTRY.md) defines open configurations and atom-conserving cut/join reactions, with scripts and plots in [chemistry/](chemistry/). For three primes, every molecule using all three elements has no repeated coordinate line and is described by three coordinate bit lists, where a line is present when its two fixed coordinate bits differ. This parameterization proves bipartiteness and gives nonnegative rational binary-molecule coefficients whose denominators divide the product of the three primes. Every three-prime molecule therefore has a pure binary recipe in a batch of size dividing that product.
+
+Under the closed-endpoint reaction model of [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md) (element-conserving `1→2`, `2→1`, or `2→2` replacements between molecules, allowing molecular byproducts), at least three distinct elements are required for any nontrivial reaction (with at most two prime elements, only dimers and a single binary molecule exist, so no nontrivial `1↔2` or `2↔2` balance exists). For any three distinct primes $\{p, q, r\}$, any molecule using only elements from $\{p, q, r\}$ (one, two, or all three elements) can be formed from an initial pool containing only any two of `M(p,q) = p_q q_p`, `M(p,r) = p_r r_p`, and `M(q,r) = q_r r_q` using `2→2` steps alone. See [UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md) and `every_molecule_with_elements` in [`lean/CyclicAtoms/GeneralSynthesis.lean`](lean/CyclicAtoms/GeneralSynthesis.lean).
 
 ## Maximum size for three primes
 

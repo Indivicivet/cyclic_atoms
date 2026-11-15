@@ -22,7 +22,17 @@ Unless stated otherwise, our results concern distinct prime elements. Non-prime 
 
 A graph colouring with opposite colours at every bond is called an **in/out assignment**. It exists exactly when the bond graph is bipartite.
 
-These definitions are formalized in Lean 4 in [`lean/CyclicAtoms/Defs.lean`](lean/CyclicAtoms/Defs.lean) (see [`lean/README.md`](lean/README.md)).
+## Chemistry
+
+In an *open configuration*, occupied points belong to either one or two atoms. A point on just one atom is an *open site*. A *closed configuration* has every occupied point paired; its connected components are molecules. A *fragment* is a group of intact atoms kept together during a reaction, possibly with open sites.
+
+We can cut a configuration into separately rotatable fragments and join fragments when their open sites coincide, provided total occupancy never exceeds two. Atoms remain intact, so element counts are conserved. [CHEMISTRY.md](CHEMISTRY.md) covers these reaction rules, proves that every three-prime molecule can be assembled from two-element molecules in some finite batch, and works out the minimum 140-cut split of three `3_35 5_14 7_5` molecules into fourteen `3_5 5_3` and five `3_7 7_3` molecules.
+
+The atom, configuration, and molecule definitions are formalized in Lean 4 in [`lean/CyclicAtoms/Defs.lean`](lean/CyclicAtoms/Defs.lean) (see [`lean/README.md`](lean/README.md)).
+
+If every intermediate must consist entirely of molecules, the three-copy split cannot be composed from reactions with at most two inputs and two outputs, starting with only maxima. [CLOSED_CHEMISTRY.md](CLOSED_CHEMISTRY.md) gives the obstruction and the possible small closed reaction formulas. Closed reactions with at most two inputs and two outputs require at least three distinct elements; with only one or two prime elements, the only molecules are dimers and a single binary molecule, leaving no nontrivial `1↔2` or `2↔2` balance.
+
+With molecular byproducts allowed, for any three distinct primes `{p, q, r}`, any two of the binary molecules `M(p,q)`, `M(p,r)`, and `M(q,r)` suffice to form any molecule whose elements lie in `{p, q, r}` using `2→2` closed-endpoint reactions ([UNIVERSAL_SYNTHESIS.md](UNIVERSAL_SYNTHESIS.md), formalized in [`lean/CyclicAtoms/GeneralSynthesis.lean`](lean/CyclicAtoms/GeneralSynthesis.lean); see [the proof audit](lean/PROOF_AUDIT.md)).
 
 ## Basic examples
 
