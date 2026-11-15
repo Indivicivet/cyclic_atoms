@@ -7,9 +7,10 @@ python visualization/circle.py zoo/235.md#2_3_5_max
 python visualization/graph.py zoo/235.md#2_3_5_max
 python visualization/example_3711.py
 python visualization/example_35711.py
+python visualization/wip_3d.py
 ```
 
-Omit the output path (or `--outdir`) to open interactive plot windows directly, or pass an output file / `--outdir output` to save PNGs:
+For the 2D scripts, omit the output path (or `--outdir`) to open interactive plot windows directly, or pass an output file / `--outdir output` to save PNGs:
 
 ```sh
 python visualization/circle.py zoo/235.md#2_3_5_max output/circle.png
@@ -21,6 +22,8 @@ python visualization/example_35711.py --outdir output
 Both general renderers accept `path.md#section` (or `path.md` when the file has a single fenced block), as well as rational 0A JSON and signed 0B JSON. They check exact bond occupancy, connectivity and, for 0B, opposite colours. The circular view shows one ring per atom and one dot per point, with a highlighted atom and its bonds; use `--highlight INDEX` to select a different input-list index. Dots with the same angle are bonded. Spokes are schematic; crossings do not form bonds. Large examples are best viewed zoomed in.
 
 The graph shows atoms as vertices, with element encoded by colour and shape. Vertex numbers are input indices. Crossings do not create bonds. Parallel bonds may overlap visually; multiplicity remains in the data. To keep the graph readable, it rejects molecules over 150 atoms; use the structured layer view for larger examples.
+
+The 3D viewer has a molecule picker and controls for ring radius and z spacing. Atoms are dots with circular loops that meet at bond junctions. Radius zero gives a point-and-line graph; z spacing zero makes the drawing flat. Drag to rotate and scroll to zoom. Coordinates are schematic.
 
 The 3–7–11 map has a dot per 3-atom. Each row is an 11-atom; each pair of column lines represents two 7-atoms.
 
